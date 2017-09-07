@@ -1,0 +1,6 @@
+language: csharp
+dist: trusty
+sudo: false
+mono: none
+dotnet: 2.0.0
+solution: RaspberryPi.Libs.sln
