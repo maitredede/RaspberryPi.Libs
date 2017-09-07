@@ -4,3 +4,7 @@ sudo: false
 mono: none
 dotnet: 2.0.0
 solution: RaspberryPi.Libs.sln
+install:
+  - dotnet restore $TRAVIS_SOLUTION
+script:
+  - dotnet build $TRAVIS_SOLUTION
