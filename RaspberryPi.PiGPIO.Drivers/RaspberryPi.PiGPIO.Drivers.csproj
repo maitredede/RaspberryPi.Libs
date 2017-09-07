@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>PiGPIO.Drivers</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />
+  </ItemGroup>
+
+</Project>

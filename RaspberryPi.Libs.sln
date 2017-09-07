@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO", "RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj", "{B5985AB3-2772-41CC-9A42-1E3BD10B5441}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Drivers", "RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj", "{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.PiGPIO.Animations", "RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj", "{337679BB-12A9-45AA-9134-C34762391F55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +26,14 @@ Global
 		{B5985AB3-2772-41CC-9A42-1E3BD10B5441}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5985AB3-2772-41CC-9A42-1E3BD10B5441}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5985AB3-2772-41CC-9A42-1E3BD10B5441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{337679BB-12A9-45AA-9134-C34762391F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{337679BB-12A9-45AA-9134-C34762391F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{337679BB-12A9-45AA-9134-C34762391F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{337679BB-12A9-45AA-9134-C34762391F55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
