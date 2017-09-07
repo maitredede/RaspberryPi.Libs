@@ -26,9 +26,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Button",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Callbacks", "Samples\RaspberryPi.PiGPIO.Callbacks\RaspberryPi.PiGPIO.Callbacks.csproj", "{675BA46C-52FA-42DE-AC32-B9B1A5BC4104}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.Native", "RaspberryPi.Native\RaspberryPi.Native.csproj", "{822D7006-DC1C-49E6-919E-4905AA29331E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.Camera", "RaspberryPi.Camera\RaspberryPi.Camera.csproj", "{BBCD7DC5-873F-449D-9C88-1CF1D19841BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.Userland", "RaspberryPi.Userland\RaspberryPi.Userland.csproj", "{6517AD71-C1C0-4A9A-B075-68F4A519FF9D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC", "RaspberryPi.LibNFC\RaspberryPi.LibNFC.csproj", "{7757A8A4-C444-4DF0-B129-19EAD8D70859}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC.NfcPoll", "Samples\RaspberryPi.LibNFC.NfcPoll\RaspberryPi.LibNFC.NfcPoll.csproj", "{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,14 +68,22 @@ Global
 		{675BA46C-52FA-42DE-AC32-B9B1A5BC4104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{675BA46C-52FA-42DE-AC32-B9B1A5BC4104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{675BA46C-52FA-42DE-AC32-B9B1A5BC4104}.Release|Any CPU.Build.0 = Release|Any CPU
-		{822D7006-DC1C-49E6-919E-4905AA29331E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{822D7006-DC1C-49E6-919E-4905AA29331E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{822D7006-DC1C-49E6-919E-4905AA29331E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{822D7006-DC1C-49E6-919E-4905AA29331E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBCD7DC5-873F-449D-9C88-1CF1D19841BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BBCD7DC5-873F-449D-9C88-1CF1D19841BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBCD7DC5-873F-449D-9C88-1CF1D19841BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBCD7DC5-873F-449D-9C88-1CF1D19841BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6517AD71-C1C0-4A9A-B075-68F4A519FF9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6517AD71-C1C0-4A9A-B075-68F4A519FF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6517AD71-C1C0-4A9A-B075-68F4A519FF9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6517AD71-C1C0-4A9A-B075-68F4A519FF9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7757A8A4-C444-4DF0-B129-19EAD8D70859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7757A8A4-C444-4DF0-B129-19EAD8D70859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7757A8A4-C444-4DF0-B129-19EAD8D70859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7757A8A4-C444-4DF0-B129-19EAD8D70859}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +92,7 @@ Global
 		{538A561D-D7B2-47C5-A421-220F2748DAE0} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 		{77445E7B-5A58-41A4-88F9-2B999A038409} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 		{675BA46C-52FA-42DE-AC32-B9B1A5BC4104} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
+		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0750EB6C-8318-41A4-A8E8-333258F26FF4}
