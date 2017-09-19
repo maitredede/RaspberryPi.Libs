@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <RootNamespace>PiGPIO.Drivers</RootNamespace>
+    <RootNamespace>RaspberryPi.PiGPIO.Drivers</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO.Interop
+namespace RaspberryPi.PiGPIO.Interop
 {
     internal static class PiGpiodIf2NativeMethods
     {

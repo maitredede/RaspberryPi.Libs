@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     public sealed class WaveformBuilder
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace PiGPIO.Drivers
+namespace RaspberryPi.PiGPIO.Drivers
 {
     public static class PWMChannelDriverExtensions
     {
@@ -20,14 +20,16 @@ namespace PiGPIO.Drivers
             comp.SetPWM(ledNum * 3 + 2, b);
         }
 
+        private const double colorRatio = 4095.0 / 255.0;
+        /// <summary>
+        /// Set RGB led color (for a 12 bits PWM)
+        /// </summary>
+        /// <param name="comp">The component</param>
+        /// <param name="ledNum">LED number</param>
+        /// <param name="color"></param>
         public static void SetLED(this IPWMChannelDriver comp, int ledNum, Color color)
         {
-            comp.SetLED(ledNum, color, 4);
-        }
-
-        public static void SetLED(this IPWMChannelDriver comp, int ledNum, Color color, int bitshift)
-        {
-            comp.SetLED(ledNum, color.R << bitshift, color.G << bitshift, color.B << bitshift);
+            comp.SetLED(ledNum, (int)(color.R * colorRatio), (int)(color.G * colorRatio), (int)(color.B * colorRatio));
         }
     }
 }

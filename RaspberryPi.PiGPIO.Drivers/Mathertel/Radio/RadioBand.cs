@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO.Drivers.Mathertel.Radio
+namespace RaspberryPi.PiGPIO.Drivers.Mathertel.Radio
 {
     /// <summary>
     /// The BANDs a receiver probably can implement

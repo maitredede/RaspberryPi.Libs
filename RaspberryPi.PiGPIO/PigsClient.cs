@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     /// <summary>
     /// PiGpio socket client
@@ -80,18 +80,46 @@ namespace PiGPIO
             this.m_control.Dispose();
         }
 
+        ///// <summary>
+        ///// Connects to the remote host
+        ///// </summary>
+        ///// <returns></returns>
+        //public async Task ConnectAsync()
+        //{
+        //    await Task.WhenAll(this.m_control.Connect(this.m_host, this.m_port), this.m_notif.Connect(this.m_host, this.m_port));
+
+        //    this.m_lastLevel = BR1(this.m_notif);
+        //    this.m_handle = NOIB(this.m_notif);
+        //    this.NB(this.m_handle, this.m_monitor);
+        //    this.StartThread();
+        //}
+
+        private Task m_connectTask;
+
         /// <summary>
         /// Connects to the remote host
         /// </summary>
         /// <returns></returns>
         public async Task ConnectAsync()
         {
-            await Task.WhenAll(this.m_control.Connect(this.m_host, this.m_port), this.m_notif.Connect(this.m_host, this.m_port));
+            lock (this)
+            {
+                if (this.m_connectTask == null)
+                {
+                    this.m_connectTask = Task.WhenAll(this.m_control.Connect(this.m_host, this.m_port), this.m_notif.Connect(this.m_host, this.m_port));
+                }
+            }
+            await this.m_connectTask;
 
             this.m_lastLevel = BR1(this.m_notif);
             this.m_handle = NOIB(this.m_notif);
             this.NB(this.m_handle, this.m_monitor);
             this.StartThread();
+
+            lock (this)
+            {
+                this.m_connectTask = null;
+            }
         }
 
         private void StopThread()
@@ -873,6 +901,50 @@ namespace PiGPIO
         {
             Commands cmd = Commands.SPIX;
             uint p1 = (uint)handle;
+            uint p2 = 0;
+            int p3 = txBuffer.Length;
+            int res;
+            this.m_control.RunCommand(cmd, p1, p2, p3, txBuffer, out res, out byte[] rxBuffer);
+            if (res < 0)
+                throw new PiGPIOException(res);
+            return rxBuffer;
+        }
+
+        public void BSpiOpen(int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags)
+        {
+            byte[] data = new byte[20];
+            data.Set(0, gpioMiso);
+            data.Set(4, gpioMosi);
+            data.Set(8, gpioClk);
+            data.Set(12, bauds);
+            data.Set(16, flags);
+
+            Commands cmd = Commands.BSPIO;
+            uint p1 = (uint)gpioCS;
+            uint p2 = 0;
+            int p3 = data.Length;
+            int res;
+            this.m_control.RunCommand(cmd, p1, p2, p3, data, out res);
+            if (res < 0)
+                throw new PiGPIOException(res);
+        }
+
+        public void BSpiClose(int gpioCS)
+        {
+            Commands cmd = Commands.BSPIC;
+            uint p1 = (uint)gpioCS;
+            uint p2 = 0;
+            int p3 = 0;
+            int res;
+            this.m_control.RunCommand(cmd, p1, p2, p3, null, out res);
+            if (res < 0)
+                throw new PiGPIOException(res);
+        }
+
+        public byte[] BSpiXfer(int gpioCS, byte[] txBuffer)
+        {
+            Commands cmd = Commands.BSPIX;
+            uint p1 = (uint)gpioCS;
             uint p2 = 0;
             int p3 = txBuffer.Length;
             int res;

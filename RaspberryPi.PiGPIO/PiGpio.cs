@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using NativeMethods = PiGPIO.Interop.PiGpioNativeMethods;
+using NativeMethods = RaspberryPi.PiGPIO.Interop.PiGpioNativeMethods;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     public sealed class PiGpio : IPiGPIO, IDisposable
     {
@@ -291,6 +291,21 @@ namespace PiGPIO
         }
 
         void IPiGPIO.WaveformDelete(int waveformId)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IPiGPIO.BSpiOpen(int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IPiGPIO.BSpiClose(int gpioCS)
+        {
+            throw new NotImplementedException();
+        }
+
+        byte[] IPiGPIO.BSpiXfer(int gpioCS, byte[] txBuffer)
         {
             throw new NotImplementedException();
         }

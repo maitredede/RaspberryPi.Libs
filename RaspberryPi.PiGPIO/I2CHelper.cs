@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     /// <summary>
     /// I2C helper class

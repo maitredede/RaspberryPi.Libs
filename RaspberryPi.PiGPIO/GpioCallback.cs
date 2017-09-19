@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     public delegate void GpioCallback(int port, Edge egde, long tick);
 }

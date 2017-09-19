@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Text;
 
-namespace PiGPIO.Drivers
+namespace RaspberryPi.PiGPIO.Drivers
 {
     public static class ColorConversionExtensions
     {

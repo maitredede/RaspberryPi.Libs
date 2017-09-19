@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     internal delegate void gpioAlertFunc_t(int gpio, int level, uint tick);
 }

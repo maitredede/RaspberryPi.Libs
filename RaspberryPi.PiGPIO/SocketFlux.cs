@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     internal sealed class SocketFlux : IDisposable
     {

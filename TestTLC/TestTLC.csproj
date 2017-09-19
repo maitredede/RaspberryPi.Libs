@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />
+  </ItemGroup>
+
+</Project>

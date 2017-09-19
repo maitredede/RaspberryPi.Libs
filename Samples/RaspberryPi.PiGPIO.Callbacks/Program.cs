@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PiGPIO.Callbacks
+namespace RaspberryPi.PiGPIO.Callbacks
 {
     class Program
     {

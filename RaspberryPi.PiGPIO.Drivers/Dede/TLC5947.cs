@@ -3,136 +3,121 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace PiGPIO.Drivers.Dede
+namespace RaspberryPi.PiGPIO.Drivers.Dede
 {
-    public sealed class TLC5947 : ITLC5947, IDisposable
+    public sealed class TLC5947 : ITLC5947
     {
-        private readonly IPiGPIO m_gpio;
-        private readonly int m_num;
-        private readonly int m_spi;
-        private readonly int m_cs;
-        private readonly int m_latch;
-        private readonly int m_oeGpio;
-        private bool m_oeValue;
+        private readonly IPiGPIO m_pigpio;
+        private readonly int m_numdrivers;
+        private readonly int m_gpioClock;
+        private readonly int m_gpioData;
+        private readonly int m_gpioLatch;
+        private readonly int m_gpioDummyMiso;
+        private readonly int m_gpioOutputEnabled;
+        private readonly ushort[] m_pwmbuffer;
+        private bool m_outputEnabled = false;
 
-        private readonly ReaderWriterLockSlim m_rwlock;
-        private readonly short[] m_buffer;
+        public IPiGPIO PiGPIO => this.m_pigpio;
+        public bool OutputEnabled => this.m_outputEnabled;
 
-        private readonly short[] m_writeBuffer;
-        private bool m_dirty;
-
-        public TLC5947(IPiGPIO gpio, int num, int spi, int cs, int latchGpio, int outputEnabledGpio = int.MinValue)
+        public TLC5947(IPiGPIO pigpio, int numdrivers, int gpioClock, int gpioData, int gpioLatch, int gpioMiso, int gpioOutputEnabled = int.MinValue)
         {
-            this.m_gpio = gpio ?? throw new ArgumentNullException(nameof(gpio));
-            this.m_num = num;
-            this.m_spi = spi;
-            this.m_cs = cs;
-            this.m_latch = latchGpio;
-            this.m_oeGpio = outputEnabledGpio;
+            this.m_pigpio = pigpio ?? throw new ArgumentNullException(nameof(pigpio));
+            if (numdrivers <= 0)
+                throw new ArgumentOutOfRangeException(nameof(numdrivers));
 
-            this.m_rwlock = new ReaderWriterLockSlim();
-            this.m_buffer = new short[24 * num];
-            this.m_writeBuffer = new short[24 * num];
-            this.m_dirty = true;
+            this.m_pwmbuffer = new ushort[24 * numdrivers];
+            this.m_pigpio = pigpio;
+            this.m_numdrivers = numdrivers;
+            this.m_gpioClock = gpioClock;
+            this.m_gpioData = gpioData;
+            this.m_gpioLatch = gpioLatch;
+            this.m_gpioDummyMiso = gpioMiso;
+            this.m_gpioOutputEnabled = gpioOutputEnabled;
         }
 
         public void Begin()
         {
-            this.m_gpio.SetMode(this.m_latch, Mode.Output);
-            if (this.m_oeGpio != int.MinValue)
+            this.m_pigpio.SetMode(this.m_gpioClock, Mode.Output);
+            this.m_pigpio.SetMode(this.m_gpioData, Mode.Output);
+            this.m_pigpio.SetMode(this.m_gpioLatch, Mode.Output);
+            if (this.m_gpioOutputEnabled != int.MinValue)
             {
-                this.m_gpio.SetMode(this.m_oeGpio, Mode.Output);
-                this.SetOuputEnabled(false);
+                this.m_pigpio.SetMode(this.m_gpioOutputEnabled, Mode.Output);
             }
         }
 
-        public void SetOuputEnabled(bool outputEnabled)
+        public void SetOutputEnabled(bool enabled)
         {
-            if (this.m_oeGpio == int.MinValue)
-                throw new NotSupportedException();
-            this.m_oeValue = outputEnabled;
-            this.m_gpio.Write(this.m_oeGpio, !this.m_oeValue);
+            this.m_outputEnabled = enabled;
+            if (this.m_gpioOutputEnabled != int.MinValue)
+                this.m_pigpio.Write(this.m_gpioOutputEnabled, !this.m_outputEnabled);
         }
 
-        public void Dispose()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte Reverse(byte b)
         {
-            this.m_rwlock.Dispose();
+            int revB = 0;
+            revB += (b & 0b0000_0001) << 7;
+            revB += (b & 0b0000_0010) << 5;
+            revB += (b & 0b0000_0100) << 3;
+            revB += (b & 0b0000_1000) << 1;
+            revB += (b & 0b0001_0000) >> 1;
+            revB += (b & 0b0010_0000) >> 3;
+            revB += (b & 0b0100_0000) >> 5;
+            revB += (b & 0b1000_0000) >> 7;
+            return (byte)revB;
         }
 
-        public void SetPWM(int chan, int pwm)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Clamp(ref int value, int minInclusive, int maxInclusive)
         {
-            if (pwm < 0 || pwm > 4095)
-                throw new ArgumentOutOfRangeException(nameof(pwm));
-            this.m_rwlock.EnterWriteLock();
-            try
-            {
-                this.m_buffer[chan] = (short)pwm;
-                this.m_dirty = true;
-            }
-            finally
-            {
-                this.m_rwlock.ExitWriteLock();
-            }
+            if (value < minInclusive)
+                value = minInclusive;
+            if (value > maxInclusive)
+                value = maxInclusive;
         }
 
+        /// <inheritDoc />
         public void Write()
         {
-            this.m_rwlock.EnterUpgradeableReadLock();
-            try
+            int len = this.m_pwmbuffer.Length * 3 / 2;
+            byte[] buffer = new byte[len];
+            for (int i = 0; i < 24 * m_numdrivers; i += 2)
             {
-                if (!this.m_dirty)
-                    return;
-                this.m_rwlock.EnterWriteLock();
-                try
-                {
-                    if (!this.m_dirty)
-                        return;
+                ushort pwm0 = this.m_pwmbuffer[i + 0];
+                ushort pwm1 = this.m_pwmbuffer[i + 1];
 
-                    lock (this.m_writeBuffer)
-                    {
-                        Array.ConstrainedCopy(this.m_buffer, 0, this.m_writeBuffer, 0, this.m_buffer.Length);
-                        this.m_dirty = false;
-                        ThreadPool.QueueUserWorkItem(this.WriteAsync);
-                    }
-                }
-                finally
-                {
-                    this.m_rwlock.ExitWriteLock();
-                }
+                byte b0 = (byte)((pwm0 & 0x0FF0) >> 4);
+                byte b1 = (byte)((pwm0 & 0x000F) << 4 | ((pwm1 & 0x0F00) >> 8));
+                byte b2 = (byte)(pwm1 & 0x00FF);
+
+                //buffer[i * 3 + 0] = b0;
+                //buffer[i * 3 + 1] = b1;
+                //buffer[i * 3 + 2] = b2;
+                buffer[len - 1 - (i * 3 / 2 + 0)] = Reverse(b0);
+                buffer[len - 1 - (i * 3 / 2 + 1)] = Reverse(b1);
+                buffer[len - 1 - (i * 3 / 2 + 2)] = Reverse(b2);
             }
-            finally
+            //                      210 9876 5432 1098 7654 3210
+            //                      ... .... RT.. .... .... .pmm
+            int flag = 0b0000_0000_0000_0000_0000_0000_0000_0000;
+            using (var spi = this.m_pigpio.OpenBitBangSpi(this.m_gpioLatch, this.m_gpioDummyMiso, this.m_gpioData, this.m_gpioClock, 250000, flag))
             {
-                this.m_rwlock.ExitUpgradeableReadLock();
+                //this.m_pigpio.Write(this.m_gpioLatch, false);
+                spi.Write(buffer);
             }
+            //this.m_pigpio.Write(this.m_gpioLatch, true);
+            //this.m_pigpio.Write(this.m_gpioLatch, false);
         }
 
-        private void WriteAsync(object state)
+        /// <inheritDoc />
+        public void SetPWM(int chan, int pwm)
         {
-            lock (this.m_writeBuffer)
-            {
-                int shortLen = sizeof(short);
-                int byteLen = shortLen * this.m_writeBuffer.Length;
-                byte[] data = new byte[byteLen];
-                //for (int i = 0; i < this.m_writeBuffer.Length; i++)
-                //{
-                //    byte[] item = BitConverter.GetBytes(this.m_writeBuffer[i]);
-                //    Array.Copy(item, 0, data, i * shortLen, shortLen);
-                //}
-                GCHandle h = GCHandle.Alloc(this.m_writeBuffer, GCHandleType.Pinned);
-                try
-                {
-                    Marshal.Copy(h.AddrOfPinnedObject(), data, 0, byteLen);
-                }
-                finally
-                {
-                    h.Free();
-                }
-                using (var spi = this.m_gpio.OpenSpi(this.m_spi, 10_000_000, 0))
-                {
-                    spi.Write(data);
-                }
-            }
+            Clamp(ref pwm, 0, 4095);
+            m_pwmbuffer[chan] = (ushort)pwm;
         }
     }
 }

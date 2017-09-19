@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     /// <summary>
     /// Extension methods
@@ -133,10 +133,16 @@ namespace PiGPIO
             return null;
         }
 
-        public static SPIHelper OpenSpi(this IPiGPIO client, int channel, int bauds, int flags)
+        public static ISpiHelper OpenSpi(this IPiGPIO client, int channel, int bauds, int flags)
         {
             int handle = client.SpiOpen(channel, bauds, flags);
-            return new SPIHelper(client, handle);
+            return new SpiHelper(client, handle);
+        }
+
+        public static ISpiHelper OpenBitBangSpi(this IPiGPIO client, int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags)
+        {
+            client.BSpiOpen(gpioCS, gpioMiso, gpioMosi, gpioClk, bauds, flags);
+            return new BitBangSpiHelper(client, gpioCS);
         }
 
         public static void SpiWrite(this IPiGPIO client, int handle, byte[] buffer, int offset, int count)
@@ -149,6 +155,13 @@ namespace PiGPIO
         public static WaveformBuilder BuildWaveform(this IPiGPIO client)
         {
             return new WaveformBuilder(client);
+        }
+
+        internal static byte[] Set(this byte[] arr, int offset, int value)
+        {
+            byte[] data = BitConverter.GetBytes(value);
+            Array.ConstrainedCopy(data, 0, arr, offset, data.Length);
+            return arr;
         }
     }
 }

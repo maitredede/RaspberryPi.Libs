@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{238BF873-13DD-4E62-93CD-31A85EB65C0F}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO", "Raspb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Drivers", "RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj", "{6F93D11F-F01E-4FE2-95F1-0628D1C65AFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.PiGPIO.Animations", "RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj", "{337679BB-12A9-45AA-9134-C34762391F55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Animations", "RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj", "{337679BB-12A9-45AA-9134-C34762391F55}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Drivers.Drawings", "RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj", "{3D515A62-2870-42E8-A020-3CB62B02DB53}"
 EndProject
@@ -33,6 +33,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC", "RaspberryPi.LibNFC\RaspberryPi.LibNFC.csproj", "{7757A8A4-C444-4DF0-B129-19EAD8D70859}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC.NfcPoll", "Samples\RaspberryPi.LibNFC.NfcPoll\RaspberryPi.LibNFC.NfcPoll.csproj", "{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.WiringPi", "RaspberryPi.WiringPi\RaspberryPi.WiringPi.csproj", "{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +86,10 @@ Global
 		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

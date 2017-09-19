@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO.Drivers.Mathertel.Radio
+namespace RaspberryPi.PiGPIO.Drivers.Mathertel.Radio
 {
     /// <summary>
     /// A structure that contains information about the radio features from the chip

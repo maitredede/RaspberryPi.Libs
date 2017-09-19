@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO.Animations
+namespace RaspberryPi.PiGPIO.Animations
 {
     public static class WaveformAnimationExtensions
     {

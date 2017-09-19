@@ -3,7 +3,7 @@
 //using System.Text;
 //using NativeMethods = PiGPIO.PiGpiodIf2NativeMethods;
 
-//namespace PiGPIO
+//namespace RaspberryPi.PiGPIO
 //{
 //    public sealed class PiGpiodIf2 : IPiGPIO, IDisposable
 //    {

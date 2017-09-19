@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PiGPIO.Button
+namespace RaspberryPi.PiGPIO.Button
 {
     class Program
     {

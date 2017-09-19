@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PiGPIO
+namespace RaspberryPi.PiGPIO
 {
     public interface IPiGPIO
     {
@@ -85,6 +85,12 @@ namespace PiGPIO
         void WaveformAppend(Pulse[] pulse);
         int WaveformCreate();
         void WaveformDelete(int waveformId);
+        #endregion
+
+        #region BitBang SPI
+        void BSpiOpen(int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags);
+        void BSpiClose(int gpioCS);
+        byte[] BSpiXfer(int gpioCS, byte[] txBuffer);
         #endregion
     }
 }

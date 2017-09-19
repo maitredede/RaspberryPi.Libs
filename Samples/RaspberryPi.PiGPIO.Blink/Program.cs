@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace PiGPIO.Blink
+namespace RaspberryPi.PiGPIO.Blink
 {
     class Program
     {
