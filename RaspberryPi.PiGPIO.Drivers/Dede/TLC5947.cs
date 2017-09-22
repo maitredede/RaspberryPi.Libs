@@ -7,9 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace RaspberryPi.PiGPIO.Drivers.Dede
 {
-    public sealed class TLC5947 : ITLC5947
+    public sealed class TLC5947 : BaseDriver, ITLC5947
     {
-        private readonly IPiGPIO m_pigpio;
         private readonly int m_numdrivers;
         private readonly int m_gpioClock;
         private readonly int m_gpioData;
@@ -19,17 +18,16 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
         private readonly ushort[] m_pwmbuffer;
         private bool m_outputEnabled = false;
 
-        public IPiGPIO PiGPIO => this.m_pigpio;
+        public IPiGPIO PiGPIO => this.m_gpio;
         public bool OutputEnabled => this.m_outputEnabled;
 
         public TLC5947(IPiGPIO pigpio, int numdrivers, int gpioClock, int gpioData, int gpioLatch, int gpioMiso, int gpioOutputEnabled = int.MinValue)
+            : base(pigpio)
         {
-            this.m_pigpio = pigpio ?? throw new ArgumentNullException(nameof(pigpio));
             if (numdrivers <= 0)
                 throw new ArgumentOutOfRangeException(nameof(numdrivers));
 
             this.m_pwmbuffer = new ushort[24 * numdrivers];
-            this.m_pigpio = pigpio;
             this.m_numdrivers = numdrivers;
             this.m_gpioClock = gpioClock;
             this.m_gpioData = gpioData;
@@ -38,22 +36,20 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
             this.m_gpioOutputEnabled = gpioOutputEnabled;
         }
 
-        public void Begin()
+        protected override void DefineUsedPins()
         {
-            this.m_pigpio.SetMode(this.m_gpioClock, Mode.Output);
-            this.m_pigpio.SetMode(this.m_gpioData, Mode.Output);
-            this.m_pigpio.SetMode(this.m_gpioLatch, Mode.Output);
+            this.UseOutput(this.m_gpioClock, false);
+            this.UseOutput(this.m_gpioData, false);
+            this.UseOutput(this.m_gpioLatch, false);
             if (this.m_gpioOutputEnabled != int.MinValue)
-            {
-                this.m_pigpio.SetMode(this.m_gpioOutputEnabled, Mode.Output);
-            }
+                this.UseOutput(this.m_gpioOutputEnabled, false);
         }
 
         public void SetOutputEnabled(bool enabled)
         {
             this.m_outputEnabled = enabled;
             if (this.m_gpioOutputEnabled != int.MinValue)
-                this.m_pigpio.Write(this.m_gpioOutputEnabled, !this.m_outputEnabled);
+                this.m_gpio.Write(this.m_gpioOutputEnabled, !this.m_outputEnabled);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -104,13 +100,13 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
             //                      210 9876 5432 1098 7654 3210
             //                      ... .... RT.. .... .... .pmm
             int flag = 0b0000_0000_0000_0000_0000_0000_0000_0000;
-            using (var spi = this.m_pigpio.OpenBitBangSpi(this.m_gpioLatch, this.m_gpioDummyMiso, this.m_gpioData, this.m_gpioClock, 250000, flag))
+            using (var spi = this.m_gpio.OpenBitBangSpi(this.m_gpioLatch, this.m_gpioDummyMiso, this.m_gpioData, this.m_gpioClock, 250000, flag))
             {
-                //this.m_pigpio.Write(this.m_gpioLatch, false);
+                //this.m_gpio.Write(this.m_gpioLatch, false);
                 spi.Write(buffer);
             }
-            //this.m_pigpio.Write(this.m_gpioLatch, true);
-            //this.m_pigpio.Write(this.m_gpioLatch, false);
+            //this.m_gpio.Write(this.m_gpioLatch, true);
+            //this.m_gpio.Write(this.m_gpioLatch, false);
         }
 
         /// <inheritDoc />

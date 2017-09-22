@@ -75,5 +75,26 @@ namespace RaspberryPi.PiGPIO.Interop
         [DllImport(LIB, EntryPoint = "spiXfer", CallingConvention = CallingConvention.Cdecl)]
         public static extern short spiXfer(ushort handle, IntPtr txBuf, IntPtr rxBuf, ushort count);
         #endregion
+
+        [DllImport(LIB, EntryPoint = "fileOpen", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short fileOpen(string file, short mode);
+        [DllImport(LIB, EntryPoint = "fileClose", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short fileClose(short handle);
+
+
+        [DllImport(LIB, EntryPoint = "gpioRead_Bits_0_31", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint readBits_0_31();
+        [DllImport(LIB, EntryPoint = "gpioRead_Bits_32_53", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint readBits_32_53();
+
+        [DllImport(LIB, EntryPoint = "gpioWrite_Bits_0_31_Clear", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short clearBits_0_31(uint bits);
+        [DllImport(LIB, EntryPoint = "gpioWrite_Bits_32_53_Clear", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short clearBits_32_53(uint bits);
+
+        [DllImport(LIB, EntryPoint = "gpioWrite_Bits_0_31_Set", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short setBits_0_31(uint bits);
+        [DllImport(LIB, EntryPoint = "gpioWrite_Bits_32_53_Set", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short setBits_32_53(uint bits);
     }
 }

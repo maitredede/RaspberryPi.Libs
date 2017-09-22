@@ -1,8 +1,8 @@
-﻿using System;
+﻿using RaspberryPi.PiGPIO.Interop;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using NativeMethods = RaspberryPi.PiGPIO.Interop.PiGpioNativeMethods;
 
 namespace RaspberryPi.PiGPIO
 {
@@ -12,20 +12,20 @@ namespace RaspberryPi.PiGPIO
 
         public PiGpio()
         {
-            int ret = NativeMethods.Initialise();
+            int ret = PiGpioNativeMethods.Initialise();
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
 
         public void Dispose()
         {
-            NativeMethods.Terminate();
+            PiGpioNativeMethods.Terminate();
         }
 
         /// <inheritDoc />
         public Mode GetMode(int gpio)
         {
-            short value = NativeMethods.GetMode((ushort)gpio);
+            short value = PiGpioNativeMethods.GetMode((ushort)gpio);
             if (value < 0)
                 throw new PiGPIOException(value);
             return (Mode)value;
@@ -34,7 +34,7 @@ namespace RaspberryPi.PiGPIO
         /// <inheritDoc />
         public void NoiseFilter(int gpio, int steady, int active)
         {
-            short ret = NativeMethods.NoiseFilter((ushort)gpio, (ushort)steady, (ushort)active);
+            short ret = PiGpioNativeMethods.NoiseFilter((ushort)gpio, (ushort)steady, (ushort)active);
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
@@ -42,7 +42,7 @@ namespace RaspberryPi.PiGPIO
         /// <inheritDoc />
         public void SetMode(int gpio, Mode mode)
         {
-            short ret = NativeMethods.SetMode((ushort)gpio, (ushort)mode);
+            short ret = PiGpioNativeMethods.SetMode((ushort)gpio, (ushort)mode);
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
@@ -50,7 +50,7 @@ namespace RaspberryPi.PiGPIO
         /// <inheritDoc />
         public void SetPullUpDown(int gpio, PullUpDown pud)
         {
-            short ret = NativeMethods.SetPullUpDown((ushort)gpio, (ushort)pud);
+            short ret = PiGpioNativeMethods.SetPullUpDown((ushort)gpio, (ushort)pud);
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
@@ -86,7 +86,7 @@ namespace RaspberryPi.PiGPIO
                 }
                 else
                 {
-                    short ret = NativeMethods.SetAlertFunc((ushort)gpio, this.GpioAlertCallback);
+                    short ret = PiGpioNativeMethods.SetAlertFunc((ushort)gpio, this.GpioAlertCallback);
                     if (ret < 0)
                         throw new PiGPIOException(ret);
                     callbacks = new List<CallbackInfo>();
@@ -119,14 +119,14 @@ namespace RaspberryPi.PiGPIO
 
         public void Write(int gpio, bool value)
         {
-            short ret = NativeMethods.Write((ushort)gpio, (ushort)(value ? 1 : 0));
+            short ret = PiGpioNativeMethods.Write((ushort)gpio, (ushort)(value ? 1 : 0));
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
 
         public bool Read(int gpio)
         {
-            short ret = NativeMethods.Read((ushort)gpio);
+            short ret = PiGpioNativeMethods.Read((ushort)gpio);
             if (ret < 0)
                 throw new PiGPIOException(ret);
             return ret != 0;
@@ -134,7 +134,7 @@ namespace RaspberryPi.PiGPIO
 
         public int I2COpen(int bus, int address, int flags)
         {
-            short ret = NativeMethods.I2COpen((ushort)bus, (ushort)address, (ushort)flags);
+            short ret = PiGpioNativeMethods.I2COpen((ushort)bus, (ushort)address, (ushort)flags);
             if (ret < 0)
                 throw new PiGPIOException(ret);
             return ret;
@@ -142,24 +142,29 @@ namespace RaspberryPi.PiGPIO
 
         public void I2CClose(int handle)
         {
-            short ret = NativeMethods.I2CClose((ushort)handle);
+            short ret = PiGpioNativeMethods.I2CClose((ushort)handle);
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
 
         public int HardwareRevision()
         {
-            return NativeMethods.HardwareRevision();
+            return PiGpioNativeMethods.HardwareRevision();
         }
 
-        int IPiGPIO.FileOpen(string file, int mode)
+        public int FileOpen(string file, int mode)
         {
-            throw new NotImplementedException();
+            short ret = PiGpioNativeMethods.fileOpen(file, (short)mode);
+            if (ret < 0)
+                throw new PiGPIOException(ret);
+            return ret;
         }
 
-        int IPiGPIO.FileClose(int handle)
+        public void FileClose(int handle)
         {
-            throw new NotImplementedException();
+            short ret = PiGpioNativeMethods.fileClose((short)handle);
+            if (ret < 0)
+                throw new PiGPIOException(ret);
         }
 
         byte[] IPiGPIO.FileRead(int handle, int count)
@@ -183,7 +188,7 @@ namespace RaspberryPi.PiGPIO
             GCHandle h = GCHandle.Alloc(data, GCHandleType.Pinned);
             try
             {
-                short ret = NativeMethods.i2cReadDevice((ushort)handle, h.AddrOfPinnedObject(), (ushort)num);
+                short ret = PiGpioNativeMethods.i2cReadDevice((ushort)handle, h.AddrOfPinnedObject(), (ushort)num);
                 if (ret < 0)
                     throw new PiGPIOException(ret);
                 if (ret < num)
@@ -205,7 +210,7 @@ namespace RaspberryPi.PiGPIO
 
         public int SpiOpen(int chan, int baud, int flags)
         {
-            short ret = NativeMethods.spiOpen((ushort)chan, (ushort)baud, (ushort)flags);
+            short ret = PiGpioNativeMethods.spiOpen((ushort)chan, (ushort)baud, (ushort)flags);
             if (ret < 0)
                 throw new PiGPIOException(ret);
             return ret;
@@ -213,7 +218,7 @@ namespace RaspberryPi.PiGPIO
 
         public void SpiClose(int handle)
         {
-            short ret = NativeMethods.spiClose((ushort)handle);
+            short ret = PiGpioNativeMethods.spiClose((ushort)handle);
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
@@ -223,7 +228,7 @@ namespace RaspberryPi.PiGPIO
             GCHandle h = GCHandle.Alloc(data, GCHandleType.Pinned);
             try
             {
-                short ret = NativeMethods.spiWrite((ushort)handle, h.AddrOfPinnedObject(), (ushort)data.Length);
+                short ret = PiGpioNativeMethods.spiWrite((ushort)handle, h.AddrOfPinnedObject(), (ushort)data.Length);
                 if (ret < 0)
                     throw new PiGPIOException(ret);
             }
@@ -239,7 +244,7 @@ namespace RaspberryPi.PiGPIO
             GCHandle h = GCHandle.Alloc(data, GCHandleType.Pinned);
             try
             {
-                short ret = NativeMethods.spiRead((ushort)handle, h.AddrOfPinnedObject(), (ushort)data.Length);
+                short ret = PiGpioNativeMethods.spiRead((ushort)handle, h.AddrOfPinnedObject(), (ushort)data.Length);
                 if (ret < 0)
                     throw new PiGPIOException(ret);
             }
@@ -259,7 +264,7 @@ namespace RaspberryPi.PiGPIO
                 GCHandle rx = GCHandle.Alloc(rxBuff, GCHandleType.Pinned);
                 try
                 {
-                    short ret = NativeMethods.spiXfer((ushort)handle, tx.AddrOfPinnedObject(), tx.AddrOfPinnedObject(), (ushort)txBuff.Length);
+                    short ret = PiGpioNativeMethods.spiXfer((ushort)handle, tx.AddrOfPinnedObject(), tx.AddrOfPinnedObject(), (ushort)txBuff.Length);
                     if (ret < 0)
                         throw new PiGPIOException(ret);
                 }
@@ -308,6 +313,44 @@ namespace RaspberryPi.PiGPIO
         byte[] IPiGPIO.BSpiXfer(int gpioCS, byte[] txBuffer)
         {
             throw new NotImplementedException();
+        }
+
+        public int ReadBits_0_31()
+        {
+            return unchecked((int)PiGpioNativeMethods.readBits_0_31());
+        }
+
+        public int ReadBits_32_53()
+        {
+            return unchecked((int)PiGpioNativeMethods.readBits_32_53());
+        }
+
+        public void SetBits_0_31(int bits)
+        {
+            short ret = PiGpioNativeMethods.setBits_0_31(unchecked((uint)bits));
+            if (ret < 0)
+                throw new PiGPIOException(ret);
+        }
+
+        public void SetBits_32_53(int bits)
+        {
+            short ret = PiGpioNativeMethods.setBits_32_53(unchecked((uint)bits));
+            if (ret < 0)
+                throw new PiGPIOException(ret);
+        }
+
+        public void ClearBits_0_31(int bits)
+        {
+            short ret = PiGpioNativeMethods.clearBits_0_31(unchecked((uint)bits));
+            if (ret < 0)
+                throw new PiGPIOException(ret);
+        }
+
+        public void ClearBits_32_53(int bits)
+        {
+            short ret = PiGpioNativeMethods.clearBits_32_53(unchecked((uint)bits));
+            if (ret < 0)
+                throw new PiGPIOException(ret);
         }
     }
 }

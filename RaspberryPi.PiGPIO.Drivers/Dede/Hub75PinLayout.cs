@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RaspberryPi.PiGPIO.Drivers.Dede
 {
-    public sealed class Hub75PinLayout
+    public sealed class Hub75PinLayout : CommonLedMatrixLayout
     {
         internal Hub75PinLayout()
         {
@@ -20,15 +20,10 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
         public int G2 { get; private set; }
         public int B2 { get; private set; }
 
-        public int A { get; private set; }
-        public int B { get; private set; }
         public int C { get; private set; }
         public int D { get; private set; }
         public int E { get; private set; }
 
-        public int Clock { get; private set; }
-        public int Strobe { get; private set; }
-        public int OE { get; private set; }
 
         private static Hub75PinLayout _regular;
         public static Hub75PinLayout Regular

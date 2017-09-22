@@ -66,7 +66,7 @@ namespace RaspberryPi.PiGPIO
 
         #region Files
         int FileOpen(string file, int mode);
-        int FileClose(int handle);
+        void FileClose(int handle);
         byte[] FileRead(int handle, int count);
         int FileSeek(int handle, int offset, int from);
         void FileWrite(int handle, byte[] data);
@@ -92,5 +92,12 @@ namespace RaspberryPi.PiGPIO
         void BSpiClose(int gpioCS);
         byte[] BSpiXfer(int gpioCS, byte[] txBuffer);
         #endregion
+
+        int ReadBits_0_31();
+        int ReadBits_32_53();
+        void SetBits_0_31(int bits);
+        void SetBits_32_53(int bits);
+        void ClearBits_0_31(int bits);
+        void ClearBits_32_53(int bits);
     }
 }

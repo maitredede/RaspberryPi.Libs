@@ -666,7 +666,7 @@ namespace RaspberryPi.PiGPIO
             return res;
         }
 
-        public int FileClose(int handle)
+        public void FileClose(int handle)
         {
             Commands cmd = Commands.FC;
             uint p1 = (uint)handle;
@@ -675,7 +675,7 @@ namespace RaspberryPi.PiGPIO
             int p3 = data.Length;
             int res;
             this.m_control.RunCommand(cmd, p1, p2, p3, data, out res);
-            return res;
+            //return res;
         }
 
         /// <summary>
@@ -952,6 +952,41 @@ namespace RaspberryPi.PiGPIO
             if (res < 0)
                 throw new PiGPIOException(res);
             return rxBuffer;
+        }
+
+        public int ReadBits_0_31()
+        {
+            Commands cmd = Commands.BR1;
+            uint p1 = 0;
+            uint p2 = 0;
+            int p3 = 0;
+            this.m_control.RunCommand(cmd, p1, p2, p3, null, out int res);
+            return res;
+        }
+
+        public int ReadBits_32_53()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetBits_0_31(int bits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetBits_32_53(int bits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearBits_0_31(int bits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearBits_32_53(int bits)
+        {
+            throw new NotImplementedException();
         }
     }
 }

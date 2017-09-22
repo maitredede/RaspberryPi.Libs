@@ -56,7 +56,7 @@ namespace TestTLC
                 //var tlc = new RaspberryPi.PiGPIO.Drivers.Adafruit.TLC5947(pigs, 1, gpioClock, gpioData, gpioLatch, gpioOE);
                 {
                     Console.WriteLine("Starting TLC5947 driver...");
-                    tlc.Begin();
+                    tlc.Init();
 
                     Action time = () =>
                     {
