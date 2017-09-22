@@ -35,27 +35,6 @@ namespace Dede.DMD
                     dmd.ScanFull();
                     Console.Write(".");
                 }
-
-                //while (true)
-                //{
-                //    for (int i = 1; i < 15; i++)
-                //    {
-                //        dmd.SetPixel(i, i, true);
-                //    }
-                //    for (int i = 0; i < 4; i++)
-                //    {
-                //        Console.Write(i);
-                //        dmd.Scan();
-                //        //Thread.Sleep(500);
-                //    }
-                //    dmd.Clear();
-                //    for (int i = 0; i < 4; i++)
-                //    {
-                //        Console.Write(i);
-                //        dmd.Scan();
-                //        //Thread.Sleep(500);
-                //    }
-                //}
             }
         }
     }

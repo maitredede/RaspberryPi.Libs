@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
@@ -8,6 +9,8 @@ using ImageSharp.Drawing.Pens;
 using ImageSharp.Drawing.Brushes;
 using ImageSharp.PixelFormats;
 using SixLabors.Primitives;
+using SixLabors.Fonts;
+using SixLabors;
 using RaspberryPi.PiGPIO.Drivers.Dede;
 
 namespace Dede.DMD
@@ -38,7 +41,7 @@ namespace Dede.DMD
 
         public void PackFromVector4(Vector4 vector)
         {
-            this.Value = vector != Vector4.Zero;
+            this.Value = (((vector.X + vector.Y + vector.Z + vector.W) / 4) > 0.5);
         }
 
         public void ToBgr24(ref Bgr24 dest)
@@ -74,6 +77,14 @@ namespace Dede.DMD
     {
         public static void Test(FreetronicsDMD dmd)
         {
+            //sudo apt-get install fonts-font-awesome fonts-dejavu ttf-mscorefonts-installer
+            foreach (var ff in SystemFonts.Families)
+            {
+                Console.WriteLine("Font: {0}", ff.Name);
+            }
+            SystemFonts.TryFind("Arial", out FontFamily arial);
+            Font font = new Font(arial, 10);
+
             using (Image<DmdPixelFormat> img = new Image<DmdPixelFormat>(32, 16))
             {
                 PointF[] pts =
@@ -83,6 +94,8 @@ namespace Dede.DMD
                     new PointF(20,0)
                 };
                 img.DrawLines(DmdPixelFormat.On, 1, pts);
+                img.DrawText("Boo", font, DmdPixelFormat.On, new PointF(20, 0));
+
                 Span<DmdPixelFormat> pixels = img.Pixels;
                 DmdPixelFormat[] pixelsArray = pixels.ToArray();
                 for (int i = 0; i < pixelsArray.Length; i++)
