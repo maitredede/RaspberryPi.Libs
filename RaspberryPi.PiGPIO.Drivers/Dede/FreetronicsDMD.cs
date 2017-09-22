@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace RaspberryPi.PiGPIO.Drivers.Dede
@@ -24,6 +25,26 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
         public static readonly int DMD_PIXELS_DOWN = 16; //pixels down y axis
         public static readonly int DMD_BITSPERPIXEL = 1;//1 bit per pixel, use more bits to allow for pwm screen brightness control
         public static readonly int DMD_RAM_SIZE_BYTES = ((DMD_PIXELS_ACROSS * DMD_BITSPERPIXEL / 8) * DMD_PIXELS_DOWN); // (32x * 1 / 8) = 4 bytes, * 16y = 64 bytes per screen here.
+
+        public void Clear()
+        {
+            this.Clear(true);
+        }
+
+        public void Clear(bool normal)
+        {
+            if (normal)
+            {
+                Array.Clear(this.bDMDScreenRAM, 0, this.bDMDScreenRAM.Length);
+            }
+            else
+            {
+                for (int i = 0; i < this.bDMDScreenRAM.Length; i++)
+                {
+                    this.bDMDScreenRAM[i] = byte.MaxValue;
+                }
+            }
+        }
 
         //lookup table for DMD::writePixel to make the pixel indexing routine faster
         private static readonly byte[] bPixelLookupTable =
@@ -69,11 +90,13 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
             this.UseOutput(this.m_layout.OE, false);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPixel(int x, int y, bool value)
         {
             this.SetPixel(x, y, DMDGraphicsMode.Normal, value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPixel(int x, int y, DMDGraphicsMode graphicsMode, bool pixel)
         {
             if (x < 0 || x >= (DMD_PIXELS_ACROSS * this.m_displaysWide))
@@ -92,50 +115,59 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
             switch (graphicsMode)
             {
                 case DMDGraphicsMode.Normal:
-                    if (pixel == true)
-                        this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // zero bit is pixel on
-                    else
+                    if (pixel)
                         this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
+                    else
+                        this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // zero bit is pixel on
                     break;
                 case DMDGraphicsMode.Inverse:
-                    if (pixel == false)
+                    if (pixel)
                         this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // zero bit is pixel on
                     else
                         this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
                     break;
-                case DMDGraphicsMode.Toggle:
-                    if (pixel == true)
-                    {
-                        if ((this.bDMDScreenRAM[uiDMDRAMPointer] & lookup) == 0)
-                            this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
-                        else
-                            this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // one bit is pixel off
-                    }
-                    break;
-                case DMDGraphicsMode.Or:
-                    //only set pixels on
-                    if (pixel == true)
-                        this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // zero bit is pixel on
-                    break;
-                case DMDGraphicsMode.Nor:
-                    //only clear on pixels
-                    if ((pixel == true) &&
-                        ((this.bDMDScreenRAM[uiDMDRAMPointer] & lookup) == 0))
-                        this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
-                    break;
+                //case DMDGraphicsMode.Toggle:
+                //    if (pixel == true)
+                //    {
+                //        if ((this.bDMDScreenRAM[uiDMDRAMPointer] & lookup) == 0)
+                //            this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
+                //        else
+                //            this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // one bit is pixel off
+                //    }
+                //    break;
+                //case DMDGraphicsMode.Or:
+                //    //only set pixels on
+                //    if (pixel == true)
+                //        this.bDMDScreenRAM[uiDMDRAMPointer] &= (byte)~lookup;  // zero bit is pixel on
+                //    break;
+                //case DMDGraphicsMode.Nor:
+                //    //only clear on pixels
+                //    if ((pixel == true) &&
+                //        ((this.bDMDScreenRAM[uiDMDRAMPointer] & lookup) == 0))
+                //        this.bDMDScreenRAM[uiDMDRAMPointer] |= lookup;   // one bit is pixel off
+                //    break;
                 default:
                     throw new NotImplementedException("GraphicsMode." + graphicsMode.ToString());
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SoftSPITransfert(byte b)
         {
             for (int i = 7; i >= 0; i--)
             {
-                bool value = (b & (1 << i)) != 0;
+                bool value = (b & (1 << i)) == 0;
                 this.m_gpio.Write(this.m_layout.Data, value);
                 this.m_gpio.Write(this.m_layout.Clock, true);
                 this.m_gpio.Write(this.m_layout.Clock, false);
+            }
+        }
+
+        public void ScanFull()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                this.Scan();
             }
         }
 

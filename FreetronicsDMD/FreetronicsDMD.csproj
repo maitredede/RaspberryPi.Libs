@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RootNamespace>Dede.DMD</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00194" />
+    <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00189" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />
+  </ItemGroup>
+
+</Project>

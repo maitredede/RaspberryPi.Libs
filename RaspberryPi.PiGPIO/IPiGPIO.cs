@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RaspberryPi.PiGPIO
 {
-    public interface IPiGPIO
+    public interface IPiGPIO : IDisposable
     {
         /// <summary>
         /// Sets the GPIO mode, typically input or output
