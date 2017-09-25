@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>RaspberryPi.PiGPIO.Drivers</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00194" />
+    <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00189" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj" />
+  </ItemGroup>
+
+</Project>
