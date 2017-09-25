@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RootNamespace>Dede.DMD</RootNamespace>
+    <RootNamespace>Dede.DMDTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RaspberryPi.PiGPIO.Animations\RaspberryPi.PiGPIO.Animations.csproj" />
+    <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp\RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp.csproj" />
     <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj" />
     <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj" />
     <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />

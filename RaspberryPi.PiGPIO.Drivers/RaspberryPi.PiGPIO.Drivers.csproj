@@ -13,8 +13,4 @@
     <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Freetronics\" />
-  </ItemGroup>
-
 </Project>

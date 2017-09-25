@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
+
+[assembly: InternalsVisibleTo("RaspberryPi.PiGPIO.Drivers.Tests")]
+[assembly: InternalsVisibleTo("RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp")]
+[assembly: InternalsVisibleTo("FreetronicsDMDImageSharpDev")]
+[assembly: InternalsVisibleTo("FreetronicsDMD")]
 
 namespace RaspberryPi.PiGPIO.Drivers
 {
     public abstract class BaseDriver
     {
         protected readonly IPiGPIO m_gpio;
+
+        public IPiGPIO Gpio => this.m_gpio;
 
         private readonly List<int> m_usedGpio;
 
@@ -17,7 +25,7 @@ namespace RaspberryPi.PiGPIO.Drivers
             this.m_usedGpio = new List<int>();
         }
 
-        public void Init()
+        public virtual void Init()
         {
             this.DefineUsedPins();
         }
