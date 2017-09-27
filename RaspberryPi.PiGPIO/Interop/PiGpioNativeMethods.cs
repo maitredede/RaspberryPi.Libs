@@ -10,10 +10,10 @@ namespace RaspberryPi.PiGPIO.Interop
         public const string LIB = "libpigpio";
 
         [DllImport(LIB, EntryPoint = "gpioHardwareRevision", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ushort HardwareRevision();
+        public static extern uint HardwareRevision();
 
         [DllImport(LIB, EntryPoint = "gpioVersion", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ushort Version();
+        public static extern uint Version();
 
         #region Essential
         [DllImport(LIB, EntryPoint = "gpioInitialise", CallingConvention = CallingConvention.Cdecl)]

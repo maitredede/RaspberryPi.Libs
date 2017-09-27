@@ -56,6 +56,7 @@ namespace RaspberryPi.PiGPIO
         void RemoveCallback(CallbackInfo callback);
 
         int HardwareRevision();
+        int PigpioVersion();
 
         #region I2C
         int I2COpen(int bus, int address, int flags);

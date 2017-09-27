@@ -20,12 +20,6 @@ namespace RaspberryPi.PiGPIO.Drivers.Freetronics
         public int PanelsWide => this.m_displaysWide;
         public int PanelsTall => this.m_displaysHigh;
 
-        //display screen (and subscreen) sizing
-        public static readonly int DMD_PIXELS_ACROSS = 32;  //pixels across x axis (base 2 size expected)
-        public static readonly int DMD_PIXELS_DOWN = 16; //pixels down y axis
-        public static readonly int DMD_BITSPERPIXEL = 1;//1 bit per pixel, use more bits to allow for pwm screen brightness control
-        public static readonly int DMD_RAM_SIZE_BYTES = ((DMD_PIXELS_ACROSS * DMD_BITSPERPIXEL / 8) * DMD_PIXELS_DOWN); // (32x * 1 / 8) = 4 bytes, * 16y = 64 bytes per screen here.
-
         public override void Clear(bool value)
         {
             if (!value)
@@ -40,19 +34,6 @@ namespace RaspberryPi.PiGPIO.Drivers.Freetronics
                 }
             }
         }
-
-        //lookup table for DMD::writePixel to make the pixel indexing routine faster
-        private static readonly byte[] bPixelLookupTable =
-        {
-           0x80,   //0, bit 7
-           0x40,   //1, bit 6
-           0x20,   //2. bit 5
-           0x10,   //3, bit 4
-           0x08,   //4, bit 3
-           0x04,   //5, bit 2
-           0x02,   //6, bit 1
-           0x01    //7, bit 0
-        };
 
         private readonly byte[] bDMDScreenRAM;
 

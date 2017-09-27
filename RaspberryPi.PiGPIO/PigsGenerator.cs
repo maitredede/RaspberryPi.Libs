@@ -53,6 +53,11 @@ namespace RaspberryPi.PiGPIO
             return 0;
         }
 
+        int IPiGPIO.PigpioVersion()
+        {
+            return 0;
+        }
+
         private void Append(FormattableString str)
         {
             lock (this.m_lck)

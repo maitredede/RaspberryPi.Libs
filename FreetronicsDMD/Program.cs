@@ -5,10 +5,11 @@ using RaspberryPi.PiGPIO.Drivers.Freetronics;
 using System;
 using System.Threading;
 using SixLabors.Fonts;
-using ImageSharp;
 using System.Linq;
 using RaspberryPi.PiGPIO.Drivers.Dede.PixelFormats;
 using SixLabors.Primitives;
+using SixLabors.ImageSharp;
+using System.Globalization;
 
 namespace Dede.DMDTest
 {
@@ -25,28 +26,48 @@ namespace Dede.DMDTest
 
         static void Main(string[] args)
         {
-            //using (var pigpio = new PigsClient("192.168.20.22", 8888))
-            //{
-            //    pigpio.ConnectAsync().Wait();
-            //    gpio = pigpio;
-            using (gpio = new PiGpio())
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr", "fr");
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
+            if (System.Diagnostics.Debugger.IsAttached)
             {
+                Console.WriteLine("Using remote gpio");
+                var pigpio = new PigsClient("192.168.20.22", 8888);
+                pigpio.ConnectAsync().Wait();
+                gpio = pigpio;
+            }
+            else
+            {
+                Console.WriteLine("Using  local gpio");
+                //gpio = new PiGpio();
+                var pigpio = new PigsClient("127.0.0.1", 8888);
+                pigpio.ConnectAsync().Wait();
+                gpio = pigpio;
+            }
+
+            FontFamily fontFamily;
+            if (!SystemFonts.TryFind("Arial", out fontFamily))
+            {
+                Console.WriteLine("Arial not found, taking first");
+                fontFamily = SystemFonts.Families.FirstOrDefault();
+            }
+            Font font = new Font(fontFamily, 14);
+
+            using (gpio)
+            {
+                Console.WriteLine($"Board : {gpio.HardwareName()} (rev {gpio.HardwareRevision()})");
+                Console.WriteLine($"PiGPIO version {gpio.PigpioVersion()}");
+                Console.WriteLine("Ready, press enter to continue...");
+                Console.ReadLine();
 
                 DMDPinLayout layout = new DMDPinLayout(gpioData, gpioA, gpioB, gpioClock, gpioStrobe, gpioOE);
                 string str = "";
-                FontFamily fontFamily;
-                if (!SystemFonts.TryFind("Arial", out fontFamily))
-                {
-                    Console.WriteLine("Arial not found, taking first");
-                    fontFamily = SystemFonts.Families.FirstOrDefault();
-                }
-                Font font = new Font(fontFamily, 10);
 
                 try
                 {
                     using (FreetronicsDMDSurface dmd2 = new FreetronicsDMDSurface(gpio, layout))
                     {
-                        dmd2.Init(false);
+                        dmd2.Init(true);
 
                         while (true)
                         {
@@ -54,14 +75,14 @@ namespace Dede.DMDTest
                             if (str != str2)
                             {
                                 str = str2;
-                                lock (dmd2.Surface)
+                                dmd2.UpdateSurface(img =>
                                 {
-                                    dmd2.Clear();
-                                    dmd2.Surface.DrawText(str, font, BitPixel.On, new PointF(0, 0));
-                                }
-                                Console.Title = str;
+                                    img.Fill(BitPixel.Off);
+                                    img.DrawText(str, font, BitPixel.On, new PointF(0, 0));
+                                });
+                                Console.WriteLine(str);
                             }
-                            ((IDMDInternals)dmd2).ScanFull();
+                            //((IDMDInternals)dmd2).ScanFull();
                         }
                     }
                 }

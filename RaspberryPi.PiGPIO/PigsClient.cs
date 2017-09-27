@@ -411,6 +411,22 @@ namespace RaspberryPi.PiGPIO
         /// http://abyz.co.uk/rpi/pigpio/pigs.html#PIGPV
         /// </summary>
         /// <returns></returns>
+        public int PigpioVersion()
+        {
+            Commands cmd = Commands.PIGPV;
+            uint p1 = 0;
+            uint p2 = 0;
+            int p3 = 0;
+            byte[] extension = new byte[0];
+            int res;
+            this.m_control.RunCommand(cmd, p1, p2, p3, extension, out res);
+            return res;
+        }
+
+        /// <summary>
+        /// http://abyz.co.uk/rpi/pigpio/pigs.html#PIGPV
+        /// </summary>
+        /// <returns></returns>
         public int PIGPV()
         {
             Commands cmd = Commands.PIGPV;

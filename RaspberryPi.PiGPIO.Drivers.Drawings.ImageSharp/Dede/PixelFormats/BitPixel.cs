@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ImageSharp.PixelFormats;
-using ImageSharp;
 using System.Numerics;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 
 namespace RaspberryPi.PiGPIO.Drivers.Dede.PixelFormats
 {

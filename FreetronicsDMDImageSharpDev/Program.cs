@@ -2,10 +2,10 @@
 //using RaspberryPi.PiGPIO.Drivers.Dede;
 //using RaspberryPi.PiGPIO.Drivers.Freetronics;
 using System;
-using ImageSharp;
 using SixLabors.Fonts;
 using SixLabors.Primitives;
 using System.Threading;
+using SixLabors.ImageSharp;
 
 public static class Program
 {

@@ -5,9 +5,17 @@
     <RootNamespace>RaspberryPi.PiGPIO.Drivers</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00194" />
-    <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00189" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-ci0077" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-ci0077" />
   </ItemGroup>
 
   <ItemGroup>

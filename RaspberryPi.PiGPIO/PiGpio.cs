@@ -147,9 +147,14 @@ namespace RaspberryPi.PiGPIO
                 throw new PiGPIOException(ret);
         }
 
+        public int PigpioVersion()
+        {
+            return unchecked((int)PiGpioNativeMethods.Version());
+        }
+
         public int HardwareRevision()
         {
-            return PiGpioNativeMethods.HardwareRevision();
+            return unchecked((int)PiGpioNativeMethods.HardwareRevision());
         }
 
         public int FileOpen(string file, int mode)
