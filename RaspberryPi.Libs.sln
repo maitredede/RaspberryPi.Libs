@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{238BF873-13DD-4E62-93CD-31A85EB65C0F}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,6 +35,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC.NfcPoll", "Samples\RaspberryPi.LibNFC.NfcPoll\RaspberryPi.LibNFC.NfcPoll.csproj", "{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.WiringPi", "RaspberryPi.WiringPi\RaspberryPi.WiringPi.csproj", "{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp", "RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp\RaspberryPi.PiGPIO.Drivers.Drawings.ImageSharp.csproj", "{D66E891D-E444-4FBA-A67B-CAAEE819FA41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreetronicsDMD", "FreetronicsDMD\FreetronicsDMD.csproj", "{3AB8D399-0029-4078-B25F-FB40D1EBF44D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTLC", "TestTLC\TestTLC.csproj", "{DE8165B8-A501-4029-80CB-9072A4676702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +96,18 @@ Global
 		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E4C2FC4-7417-464C-8F8E-846E5DEBFEEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D66E891D-E444-4FBA-A67B-CAAEE819FA41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D66E891D-E444-4FBA-A67B-CAAEE819FA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D66E891D-E444-4FBA-A67B-CAAEE819FA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D66E891D-E444-4FBA-A67B-CAAEE819FA41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AB8D399-0029-4078-B25F-FB40D1EBF44D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AB8D399-0029-4078-B25F-FB40D1EBF44D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AB8D399-0029-4078-B25F-FB40D1EBF44D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AB8D399-0029-4078-B25F-FB40D1EBF44D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8165B8-A501-4029-80CB-9072A4676702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8165B8-A501-4029-80CB-9072A4676702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8165B8-A501-4029-80CB-9072A4676702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8165B8-A501-4029-80CB-9072A4676702}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +117,8 @@ Global
 		{77445E7B-5A58-41A4-88F9-2B999A038409} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 		{675BA46C-52FA-42DE-AC32-B9B1A5BC4104} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 		{5B16A3AF-DD22-4B8E-BC3E-A122D0CA6954} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
+		{3AB8D399-0029-4078-B25F-FB40D1EBF44D} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
+		{DE8165B8-A501-4029-80CB-9072A4676702} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0750EB6C-8318-41A4-A8E8-333258F26FF4}

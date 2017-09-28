@@ -7,12 +7,13 @@ using System.Runtime.CompilerServices;
 
 namespace RaspberryPi.PiGPIO.Drivers.Dede
 {
-    public sealed class TLC5947 : BaseDriver, ITLC5947
+    public sealed class TLC5947BSPI : BaseDriver, ITLC5947
     {
         private readonly int m_numdrivers;
         private readonly int m_gpioClock;
         private readonly int m_gpioData;
         private readonly int m_gpioLatch;
+        private readonly int m_gpioDummyMiso;
         private readonly int m_gpioOutputEnabled;
         private readonly ushort[] m_pwmbuffer;
         private bool m_outputEnabled = false;
@@ -20,7 +21,7 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
         public IPiGPIO PiGPIO => this.m_gpio;
         public bool OutputEnabled => this.m_outputEnabled;
 
-        public TLC5947(IPiGPIO pigpio, int numdrivers, int gpioClock, int gpioData, int gpioLatch, int gpioOutputEnabled = int.MinValue)
+        public TLC5947BSPI(IPiGPIO pigpio, int numdrivers, int gpioClock, int gpioData, int gpioLatch, int gpioMiso, int gpioOutputEnabled = int.MinValue)
             : base(pigpio)
         {
             if (numdrivers <= 0)
@@ -31,6 +32,7 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
             this.m_gpioClock = gpioClock;
             this.m_gpioData = gpioData;
             this.m_gpioLatch = gpioLatch;
+            this.m_gpioDummyMiso = gpioMiso;
             this.m_gpioOutputEnabled = gpioOutputEnabled;
         }
 
@@ -95,9 +97,16 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
                 buffer[len - 1 - (i * 3 / 2 + 1)] = Reverse(b1);
                 buffer[len - 1 - (i * 3 / 2 + 2)] = Reverse(b2);
             }
-            this.m_gpio.BitBangSend(this.m_gpioData, this.m_gpioClock, buffer);
-            this.m_gpio.Write(this.m_gpioLatch, true);
-            this.m_gpio.Write(this.m_gpioLatch, false);
+            //                      210 9876 5432 1098 7654 3210
+            //                      ... .... RT.. .... .... .pmm
+            int flag = 0b0000_0000_0000_0000_0000_0000_0000_0000;
+            using (var spi = this.m_gpio.OpenBitBangSpi(this.m_gpioLatch, this.m_gpioDummyMiso, this.m_gpioData, this.m_gpioClock, 250000, flag))
+            {
+                //this.m_gpio.Write(this.m_gpioLatch, false);
+                spi.Write(buffer);
+            }
+            //this.m_gpio.Write(this.m_gpioLatch, true);
+            //this.m_gpio.Write(this.m_gpioLatch, false);
         }
 
         /// <inheritDoc />

@@ -6,62 +6,120 @@ using RaspberryPi.PiGPIO.Animations;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
+using System.Globalization;
 
 namespace TestTLC
 {
     public static class Program
     {
-        //const int gpioClock = 2;
-        //const int gpioData = 3;
-        //const int gpioLatch = 4;
-        //const int gpioDummyMiso = 18;
-        //const int gpioOE = 17;
-
         static readonly int gpioClock = 17;
         static readonly int gpioData = 10;
         static readonly int gpioLatch = 9;
-        static readonly int gpioDummyMiso = 2;
         static readonly int gpioOE = 4;
 
         static readonly Random rnd = new Random();
 
-        static Task Main(string[] args)
-        {
-            CancellationTokenSource cts = new CancellationTokenSource();
-            Console.CancelKeyPress += (s, e) =>
-            {
-                if (!cts.IsCancellationRequested)
-                {
-                    Console.WriteLine("Soft application exit...");
-                    e.Cancel = true;
-                    cts.Cancel();
-                }
-                else
-                {
-                    Console.WriteLine("Hard application exit...");
-                }
-            };
+        private static CommandLineApplication app;
+        private static CommandLineApplication cmdRemote;
+        private static CommandOption optHost;
+        private static CommandOption optPort;
+        private static CommandLineApplication cmdLib;
 
-            return Application(cts.Token);
+        public static int Main(string[] args)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr", "fr");
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
+            app = new CommandLineApplication();
+            app.OnExecute(new Func<int>(() =>
+            {
+                app.ShowHelp();
+                return -1;
+            }));
+            cmdRemote = app.Command("remote", cfg =>
+            {
+                optHost = cfg.Option("-h|--host", "PiGPIO host", CommandOptionType.SingleValue);
+                optPort = cfg.Option("-p|--port", "PiGPIO port", CommandOptionType.SingleValue);
+            });
+            cmdRemote.OnExecute(new Func<int>(RunRemote));
+            cmdLib = app.Command("lib", cfg =>
+            {
+            });
+            cmdLib.OnExecute(new Func<int>(RunLib));
+
+            app.HelpOption("-?|--help");
+
+            return app.Execute(args);
         }
 
-        private static async Task Application(CancellationToken cancellationToken)
+        private static int RunRemote()
+        {
+            string host = "localhost";
+            int port = 8888;
+
+            if (optHost.HasValue())
+                host = optHost.Value();
+            if (optPort.HasValue())
+            {
+                if (!int.TryParse(optPort.Value(), out port))
+                {
+                    Console.Error.WriteLine("Invalid port value");
+                    return -1;
+                }
+            }
+
+            Console.WriteLine($"Connecting to {host}:{port}");
+            using (var pigpio = new PigsClient(host, port))
+            {
+                pigpio.ConnectAsync().Wait();
+                return Run(pigpio);
+            }
+        }
+
+        private static int RunLib()
+        {
+            Console.WriteLine("Starting as library");
+            using (var gpio = new PiGpio())
+            {
+                return Run(gpio);
+            }
+        }
+
+        private static int Run(IPiGPIO gpio)
         {
             Console.WriteLine("Starting application...");
-            using (PigsClient pigs = new PigsClient("192.168.20.22", 8888))
+            using (gpio)
             {
-                Console.WriteLine("Connecting gpio...");
-                await pigs.ConnectAsync();
-                var tlc = new RaspberryPi.PiGPIO.Drivers.Dede.TLC5947(pigs, 1, gpioClock, gpioData, gpioLatch, gpioDummyMiso, gpioOE);
-                //var tlc = new RaspberryPi.PiGPIO.Drivers.Adafruit.TLC5947(pigs, 1, gpioClock, gpioData, gpioLatch, gpioOE);
+                var tlc = new TLC5947(gpio, 1, gpioClock, gpioData, gpioLatch, gpioOE);
                 {
                     Console.WriteLine("Starting TLC5947 driver...");
                     tlc.Init();
 
-                    Action time = () =>
+                    bool run = true;
+                    Console.CancelKeyPress += (s, e) =>
                     {
-                        DateTime now = DateTime.Now;
+                        if (run)
+                        {
+                            e.Cancel = true;
+                            run = false;
+                            Console.WriteLine("Soft exiting...");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Hard exiting...");
+                        }
+                    };
+
+                    System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+                    while (run)
+                    {
+                        double h = Math.Sin(sw.Elapsed.TotalSeconds) / 2 + .5;
+                        Conversions.hsv2rgb(h, 1, 1, out byte r, out byte g, out byte b);
+                        tlc.SetLED(0, Color.FromArgb(r, g, b));
                         tlc.Write();
+                        Thread.Sleep(1);
+
                         if (Console.KeyAvailable)
                         {
                             var key = Console.ReadKey(true);
@@ -72,31 +130,11 @@ namespace TestTLC
                             }
                         }
                         Console.Write(".");
-                        DateTime newNow = DateTime.Now;
-                        TimeSpan diff = newNow - now;
-                        if (diff < TimeSpan.FromSeconds(.5))
-                        {
-                            Thread.Sleep(TimeSpan.FromSeconds(.5) - diff);
-                        }
-                    };
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        //tlc.SetPWM(0, val ? 4095 : 0);
-                        //tlc.SetPWM(1, val ? 0 : 4095);
-                        //Console.Write(val ? "+" : ".");
-                        tlc.SetLED(0, Color.FromArgb(255, 0, 0));
-                        System.Diagnostics.Debug.WriteLine("Red");
-                        time();
-                        tlc.SetLED(0, Color.FromArgb(0, 255, 0));
-                        System.Diagnostics.Debug.WriteLine("Green");
-                        time();
-                        tlc.SetLED(0, Color.FromArgb(0, 0, 255));
-                        System.Diagnostics.Debug.WriteLine("Blue");
-                        time();
                     }
                 }
             }
             Console.WriteLine("Exiting application...");
+            return 0;
         }
 
         private static async Task Set(ITLC5947 tlc, Color color, ConsoleColor cc, CancellationToken cancellationToken)
