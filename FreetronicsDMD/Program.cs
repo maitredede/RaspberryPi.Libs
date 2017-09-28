@@ -10,6 +10,7 @@ using RaspberryPi.PiGPIO.Drivers.Dede.PixelFormats;
 using SixLabors.Primitives;
 using SixLabors.ImageSharp;
 using System.Globalization;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Dede.DMDTest
 {
@@ -22,29 +23,74 @@ namespace Dede.DMDTest
         private static readonly int gpioStrobe = 6;
         private static readonly int gpioOE = 13;
 
-        private static IPiGPIO gpio;
+        private static CommandLineApplication app;
+        private static CommandLineApplication cmdRemote;
+        private static CommandOption optHost;
+        private static CommandOption optPort;
+        private static CommandLineApplication cmdLib;
 
-        static void Main(string[] args)
+        public static int Main(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr", "fr");
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
 
-            if (System.Diagnostics.Debugger.IsAttached)
+            app = new CommandLineApplication();
+            app.OnExecute(new Func<int>(() =>
             {
-                Console.WriteLine("Using remote gpio");
-                var pigpio = new PigsClient("192.168.20.22", 8888);
-                pigpio.ConnectAsync().Wait();
-                gpio = pigpio;
-            }
-            else
+                app.ShowHelp();
+                return -1;
+            }));
+            cmdRemote = app.Command("remote", cfg =>
             {
-                Console.WriteLine("Using  local gpio");
-                //gpio = new PiGpio();
-                var pigpio = new PigsClient("127.0.0.1", 8888);
-                pigpio.ConnectAsync().Wait();
-                gpio = pigpio;
+                optHost = cfg.Option("-h|--host", "PiGPIO host", CommandOptionType.SingleValue);
+                optPort = cfg.Option("-p|--port", "PiGPIO port", CommandOptionType.SingleValue);
+            });
+            cmdRemote.OnExecute(new Func<int>(RunRemote));
+            cmdLib = app.Command("lib", cfg =>
+            {
+            });
+            cmdLib.OnExecute(new Func<int>(RunLib));
+
+            app.HelpOption("-?|--help");
+
+            return app.Execute(args);
+        }
+
+        private static int RunRemote()
+        {
+            string host = "localhost";
+            int port = 8888;
+
+            if (optHost.HasValue())
+                host = optHost.Value();
+            if (optPort.HasValue())
+            {
+                if (!int.TryParse(optPort.Value(), out port))
+                {
+                    Console.Error.WriteLine("Invalid port value");
+                    return -1;
+                }
             }
 
+            Console.WriteLine($"Connecting to {host}:{port}");
+            using (var pigpio = new PigsClient(host, port))
+            {
+                pigpio.ConnectAsync().Wait();
+                return Run(pigpio);
+            }
+        }
+
+        private static int RunLib()
+        {
+            Console.WriteLine("Starting as library");
+            using (var gpio = new PiGpio())
+            {
+                return Run(gpio);
+            }
+        }
+
+        private static int Run(IPiGPIO gpio)
+        {
             FontFamily fontFamily;
             if (!SystemFonts.TryFind("Arial", out fontFamily))
             {
@@ -53,96 +99,58 @@ namespace Dede.DMDTest
             }
             Font font = new Font(fontFamily, 14);
 
-            using (gpio)
+            Console.WriteLine($"Board : {gpio.HardwareName()} (rev {gpio.HardwareRevision()})");
+            Console.WriteLine($"PiGPIO version {gpio.PigpioVersion()}");
+            Console.WriteLine("Ready, press enter to continue...");
+            Console.ReadLine();
+
+            DMDPinLayout layout = new DMDPinLayout(gpioData, gpioA, gpioB, gpioClock, gpioStrobe, gpioOE);
+            string str = "";
+
+            try
             {
-                Console.WriteLine($"Board : {gpio.HardwareName()} (rev {gpio.HardwareRevision()})");
-                Console.WriteLine($"PiGPIO version {gpio.PigpioVersion()}");
-                Console.WriteLine("Ready, press enter to continue...");
-                Console.ReadLine();
-
-                DMDPinLayout layout = new DMDPinLayout(gpioData, gpioA, gpioB, gpioClock, gpioStrobe, gpioOE);
-                string str = "";
-
-                try
+                using (FreetronicsDMDSurface dmd2 = new FreetronicsDMDSurface(gpio, layout))
                 {
-                    using (FreetronicsDMDSurface dmd2 = new FreetronicsDMDSurface(gpio, layout))
-                    {
-                        dmd2.Init(true);
+                    dmd2.Init();
 
-                        while (true)
+                    bool run = true;
+                    Console.CancelKeyPress += (s, e) =>
+                    {
+                        if (run)
                         {
-                            string str2 = DateTime.Now.ToLongTimeString();
-                            if (str != str2)
+                            e.Cancel = true;
+                            run = false;
+                            Console.WriteLine("Soft exiting...");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Hard exiting...");
+                        }
+                    };
+                    while (run)
+                    {
+                        Thread.Sleep(10);
+                        string str2 = DateTime.Now.ToLongTimeString();
+                        if (str != str2)
+                        {
+                            str = str2;
+                            dmd2.UpdateSurface(img =>
                             {
-                                str = str2;
-                                dmd2.UpdateSurface(img =>
-                                {
-                                    img.Fill(BitPixel.Off);
-                                    img.DrawText(str, font, BitPixel.On, new PointF(0, 0));
-                                });
-                                Console.WriteLine(str);
-                            }
-                            //((IDMDInternals)dmd2).ScanFull();
+                                img.Fill(BitPixel.Off);
+                                img.DrawText(str, font, BitPixel.On, new PointF(0, 0));
+                            });
+                            Console.WriteLine(str);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.GetType().FullName + ": " + ex.Message);
-                    Console.Error.WriteLine(ex.StackTrace);
-                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.GetType().FullName + ": " + ex.Message);
+                Console.Error.WriteLine(ex.StackTrace);
+                return -1;
             }
         }
     }
 }
-
-
-//using System;
-//using ImageSharp;
-//using SixLabors.Fonts;
-//using SixLabors.Primitives;
-//using System.Threading;
-
-//public static class Program
-//{
-//    private static Image<Rgba32> img;
-
-//    public static void Main(string[] args)
-//    {
-//        string dt = "";
-//        FontFamily arialFamily = SystemFonts.Find("Arial");
-//        Font font = new Font(arialFamily, 10);
-//        Thread th = new Thread(ThreadMethod);
-//        using (img = new Image<Rgba32>(100, 100))
-//        {
-//            th.Start();
-//            while (true)
-//            {
-//                string dt2 = DateTime.Now.ToLongTimeString();
-//                if (dt != dt2)
-//                {
-//                    dt = dt2;
-//                    img.Fill(Rgba32.Black);
-//                    img.DrawText(dt, font, Rgba32.Blue, PointF.Empty);
-//                }
-//            }
-//        }
-//    }
-
-//    private static void ThreadMethod()
-//    {
-//        while (true)
-//        {
-//            for (int i = 0; i < img.Height; i++)
-//            {
-//                var rowData = img.GetRowSpan(i).ToArray();
-//                //Simulate working on data
-//                Thread.Sleep(1);
-//                for (int j = 0; j < rowData.Length; j++)
-//                {
-//                    rowData[j].ToString();
-//                }
-//            }
-//        }
-//    }
-//}
