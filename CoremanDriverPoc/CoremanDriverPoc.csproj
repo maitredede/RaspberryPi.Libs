@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers.Drawings\RaspberryPi.PiGPIO.Drivers.Drawings.csproj" />
     <ProjectReference Include="..\RaspberryPi.PiGPIO.Drivers\RaspberryPi.PiGPIO.Drivers.csproj" />
     <ProjectReference Include="..\RaspberryPi.PiGPIO\RaspberryPi.PiGPIO.csproj" />

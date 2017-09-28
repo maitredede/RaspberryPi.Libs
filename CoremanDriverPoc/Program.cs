@@ -1,91 +1,155 @@
-﻿using RaspberryPi.PiGPIO;
+﻿using Microsoft.Extensions.CommandLineUtils;
+using RaspberryPi.PiGPIO;
 using RaspberryPi.PiGPIO.Drivers.Dede;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Threading;
 
 namespace CoremanDriverPoc
 {
     class Program
     {
-        private static IPiGPIO gpio;
         private static CoremanHub75LedMatrix drv;
 
-        static void Main(string[] args)
+        private static CommandLineApplication app;
+        private static CommandLineApplication cmdRemote;
+        private static CommandOption optHost;
+        private static CommandOption optPort;
+        private static CommandLineApplication cmdLib;
+
+        public static int Main(string[] args)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr", "fr");
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
+            app = new CommandLineApplication();
+            app.OnExecute(new Func<int>(() =>
+            {
+                app.ShowHelp();
+                return -1;
+            }));
+            cmdRemote = app.Command("remote", cfg =>
+            {
+                optHost = cfg.Option("-h|--host", "PiGPIO host", CommandOptionType.SingleValue);
+                optPort = cfg.Option("-p|--port", "PiGPIO port", CommandOptionType.SingleValue);
+            });
+            cmdRemote.OnExecute(new Func<int>(RunRemote));
+            cmdLib = app.Command("lib", cfg =>
+            {
+            });
+            cmdLib.OnExecute(new Func<int>(RunLib));
+
+            app.HelpOption("-?|--help");
+
+            return app.Execute(args);
+        }
+
+        private static int RunRemote()
+        {
+            string host = "localhost";
+            int port = 8888;
+
+            if (optHost.HasValue())
+                host = optHost.Value();
+            if (optPort.HasValue())
+            {
+                if (!int.TryParse(optPort.Value(), out port))
+                {
+                    Console.Error.WriteLine("Invalid port value");
+                    return -1;
+                }
+            }
+
+            Console.WriteLine($"Connecting to {host}:{port}");
+            using (var pigpio = new PigsClient(host, port))
+            {
+                pigpio.ConnectAsync().Wait();
+                return Run(pigpio);
+            }
+        }
+
+        private static int RunLib()
+        {
+            Console.WriteLine("Starting as library");
+            using (var gpio = new PiGpio())
+            {
+                return Run(gpio);
+            }
+        }
+
+        private static IPiGPIO g;
+        private static int Run(IPiGPIO gpio)
         {
             Console.WriteLine("Starting application...");
-            //using (PigsClient pigs = new PigsClient("192.168.20.22", 8888))
-            using (PiGpio pigs = new PiGpio())
+            using (gpio)
             {
-                //pigs.ConnectAsync().Wait();
-                gpio = pigs;
-
+                g = gpio;
                 Console.WriteLine("Starting driver...");
-                drv = new CoremanHub75LedMatrix(pigs, Hub75PinLayout.Regular);
+                drv = new CoremanHub75LedMatrix(gpio, Hub75PinLayout.Regular);
                 //Set all to 0
                 drv.Init();
 
-                int color = 0;
-                Action NextColor = () =>
-                {
-                    color = color << 1;
-                    if ((color & 0b0000_0111) == 0)
-                    {
-                        color = 1;
-                    }
-                };
-                int pos = 0;
-                Action NextPos = () =>
-                {
-                    pos = (pos + 1) % 64;
-                };
-                int addr = 0;
-                Action NextAddress = () =>
-                {
-                    addr = (addr + 1) % 4;
-                };
-
-                Action<int> SerialSetAddress = (int address) =>
-                {
-                    // 32 = 0b0100_0000;
-
-                    int maskedAddress = address & 31;
-                    for (int i = 0; i < 3; i++)
-                    {
-                        int addressPart = (address & (0b0000_0011 << (i * 2))) >> (i * 2);
-
-                        bool a = (addressPart & 0b10) != 0;
-                        bool b = (addressPart & 0b10) != 0;
-                        SetAddress(a, b);
-                        StrobeNC();
-                    }
-                };
-
                 Console.WriteLine("Looping...");
-                while (true)
+                bool run = true;
+                Console.CancelKeyPress += (s, e) =>
                 {
-                    for (int i = 0; i < 32; i++)
+                    if (run)
                     {
-                        TransmitRowPixel(pos, color);
-                        SerialSetAddress(i);
-                        Strobe();
-
-                        Console.Write("+");
-                        Pause();
-
-                        NextColor();
-                        NextPos();
+                        e.Cancel = true;
+                        run = false;
+                        Console.WriteLine("Soft exiting...");
                     }
-                    Console.WriteLine($"pos:{pos}");
-                    Pause();
+                    else
+                    {
+                        Console.WriteLine("Hard exiting...");
+                    }
+                };
+
+                KeyHelp(false);
+
+                bool a = false;
+                bool b = false;
+                bool o = false;
+                int pos = 0;
+                while (run)
+                {
+                    var key = Console.ReadKey(true);
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.F1: KeyHelp(); break;
+                        case ConsoleKey.D: TransmitRowPixel(pos, false, false, true); Console.Write("d"); break;
+                        case ConsoleKey.L: Strobe(); Console.Write("L"); break;
+                        case ConsoleKey.A: a = !a; gpio.Write(drv.Layout.A, a); Console.Write(a ? "A" : "a"); break;
+                        case ConsoleKey.B: b = !b; gpio.Write(drv.Layout.B, b); Console.Write(b ? "B" : "b"); break;
+                        case ConsoleKey.O: o = !o; gpio.Write(drv.Layout.OE, o); Console.Write(o ? "O" : "o"); break;
+                        case ConsoleKey.Add: pos = Math.Min(63, pos + 1); Console.Write("+{0:X2}", pos); break;
+                        case ConsoleKey.Subtract: pos = Math.Max(0, pos - 1); Console.Write("-{0:X2}", pos); break;
+                    }
                 }
             }
+            return 0;
+        }
+
+        private static void KeyHelp() => KeyHelp(true);
+        private static void KeyHelp(bool clear)
+        {
+            if (clear)
+                Console.Clear();
+            Console.WriteLine("F1\tHelp");
+            Console.WriteLine("D\tTransmit 1 row data");
+            Console.WriteLine("L\tStrobe latch");
+            Console.WriteLine("A\tToggle A");
+            Console.WriteLine("B\tToggle B");
+            Console.WriteLine("O\tToggle OE");
+            Console.WriteLine("+\tPixel +1");
+            Console.WriteLine("-\tPixel -1");
         }
 
         private static void Clock()
         {
-            gpio.Write(drv.Layout.Clock, true);
-            gpio.Write(drv.Layout.Clock, false);
+            g.Write(drv.Layout.Clock, true);
+            g.Write(drv.Layout.Clock, false);
         }
 
         private static void Strobe()
@@ -96,42 +160,42 @@ namespace CoremanDriverPoc
 
         private static void StrobeUp()
         {
-            gpio.Write(drv.Layout.Strobe, true);
+            g.Write(drv.Layout.Strobe, true);
         }
 
         private static void StrobeDown()
         {
-            gpio.Write(drv.Layout.Strobe, true);
+            g.Write(drv.Layout.Strobe, true);
         }
 
         private static void StrobeNC()
         {
-            gpio.Write(drv.Layout.C, true);
-            gpio.Write(drv.Layout.C, false);
+            g.Write(drv.Layout.C, true);
+            g.Write(drv.Layout.C, false);
         }
 
         private static void TransmitPixel(bool r1, bool g1, bool b1)
         {
-            gpio.Write(drv.Layout.R1, r1);
-            gpio.Write(drv.Layout.G1, g1);
-            gpio.Write(drv.Layout.B1, b1);
+            g.Write(drv.Layout.R1, r1);
+            g.Write(drv.Layout.G1, g1);
+            g.Write(drv.Layout.B1, b1);
 
-            gpio.Write(drv.Layout.R2, false);
-            gpio.Write(drv.Layout.G2, false);
-            gpio.Write(drv.Layout.B2, false);
+            g.Write(drv.Layout.R2, false);
+            g.Write(drv.Layout.G2, false);
+            g.Write(drv.Layout.B2, false);
 
             Clock();
         }
 
         private static void TransmitPixel2(bool r1, bool g1, bool b1)
         {
-            gpio.Write(drv.Layout.R1, r1);
-            gpio.Write(drv.Layout.G1, g1);
-            gpio.Write(drv.Layout.B1, b1);
+            g.Write(drv.Layout.R1, r1);
+            g.Write(drv.Layout.G1, g1);
+            g.Write(drv.Layout.B1, b1);
 
-            gpio.Write(drv.Layout.R2, r1);
-            gpio.Write(drv.Layout.G2, g1);
-            gpio.Write(drv.Layout.B2, b1);
+            g.Write(drv.Layout.R2, r1);
+            g.Write(drv.Layout.G2, g1);
+            g.Write(drv.Layout.B2, b1);
 
             Clock();
         }
@@ -153,8 +217,8 @@ namespace CoremanDriverPoc
 
         private static void SetAddress(bool a, bool b)
         {
-            gpio.Write(drv.Layout.A, a);
-            gpio.Write(drv.Layout.B, b);
+            g.Write(drv.Layout.A, a);
+            g.Write(drv.Layout.B, b);
             //gpio.Write(drv.Layout.C, (value & (1 << 2)) != 0);
             //gpio.Write(drv.Layout.D, (value & (1 << 3)) != 0);
             //gpio.Write(drv.Layout.E, (value & (1 << 4)) != 0);
