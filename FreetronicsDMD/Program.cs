@@ -11,6 +11,7 @@ using SixLabors.Primitives;
 using SixLabors.ImageSharp;
 using System.Globalization;
 using Microsoft.Extensions.CommandLineUtils;
+using System.IO;
 
 namespace Dede.DMDTest
 {
@@ -101,8 +102,6 @@ namespace Dede.DMDTest
 
             Console.WriteLine($"Board : {gpio.HardwareName()} (rev {gpio.HardwareRevision()})");
             Console.WriteLine($"PiGPIO version {gpio.PigpioVersion()}");
-            Console.WriteLine("Ready, press enter to continue...");
-            Console.ReadLine();
 
             DMDPinLayout layout = new DMDPinLayout(gpioData, gpioA, gpioB, gpioClock, gpioStrobe, gpioOE);
             string str = "";
@@ -127,8 +126,31 @@ namespace Dede.DMDTest
                             Console.WriteLine("Hard exiting...");
                         }
                     };
+                    int offset = 0;
+                    Action Save = () =>
+                    {
+                        Console.Write("Filename=>");
+                        string filename;
+                        do
+                        {
+                            filename = $"img{offset.ToString("00000")}.png";
+                            offset++;
+                        }
+                        while (File.Exists(filename));
+                        Console.WriteLine($"Saving {filename}");
+                        dmd2.SavePNG(filename);
+                    };
+
                     while (run)
                     {
+                        if (Console.KeyAvailable)
+                        {
+                            var key = Console.ReadKey();
+                            if (key.Key == ConsoleKey.S)
+                            {
+                                Save();
+                            }
+                        }
                         Thread.Sleep(10);
                         string str2 = DateTime.Now.ToLongTimeString();
                         if (str != str2)
@@ -142,6 +164,13 @@ namespace Dede.DMDTest
                             Console.WriteLine(str);
                         }
                     }
+
+                    dmd2.UpdateSurface(u =>
+                    {
+                        u.Fill(BitPixel.Off);
+                    });
+
+                    Thread.Sleep(100);
                 }
                 return 0;
             }
