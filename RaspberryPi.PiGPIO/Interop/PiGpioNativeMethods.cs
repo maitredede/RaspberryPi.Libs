@@ -105,5 +105,12 @@ namespace RaspberryPi.PiGPIO.Interop
         public static extern short setBits_0_31(uint bits);
         [DllImport(LIB, EntryPoint = "gpioWrite_Bits_32_53_Set", CallingConvention = CallingConvention.Cdecl)]
         public static extern short setBits_32_53(uint bits);
+
+        [DllImport(LIB, EntryPoint = "gpioCfgGetInternals", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint cfgGetInternals();
+        [DllImport(LIB, EntryPoint = "gpioCfgSetInternals", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short cfgSetInternals(uint value);
+
+        internal static readonly int PI_CFG_SIGHANDLER = (1 << 10);
     }
 }

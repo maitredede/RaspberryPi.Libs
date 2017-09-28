@@ -12,6 +12,13 @@ namespace RaspberryPi.PiGPIO
 
         public PiGpio()
         {
+            //Disable internal signal handling
+            uint cfg = PiGpioNativeMethods.cfgGetInternals();
+            cfg = unchecked((uint)(cfg & ~PiGpioNativeMethods.PI_CFG_SIGHANDLER));
+            short cfgRet = PiGpioNativeMethods.cfgSetInternals(cfg);
+            if (cfgRet < 0)
+                throw new PiGPIOException(cfgRet);
+
             int ret = PiGpioNativeMethods.Initialise();
             if (ret < 0)
                 throw new PiGPIOException(ret);

@@ -163,5 +163,18 @@ namespace RaspberryPi.PiGPIO
             Array.ConstrainedCopy(data, 0, arr, offset, data.Length);
             return arr;
         }
+
+        public static void BitBangSend(this IPiGPIO gpio, int gpioData, int gpioClock, byte[] data)
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                for (int o = 7; o >= 0; o--)
+                {
+                    gpio.Write(gpioData, (data[i] & o) != 0);
+                    gpio.Write(gpioClock, true);
+                    gpio.Write(gpioClock, false);
+                }
+            }
+        }
     }
 }
