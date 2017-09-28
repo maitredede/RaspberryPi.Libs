@@ -305,19 +305,43 @@ namespace RaspberryPi.PiGPIO
             throw new NotImplementedException();
         }
 
-        void IPiGPIO.BSpiOpen(int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags)
+        public void BSpiOpen(int gpioCS, int gpioMiso, int gpioMosi, int gpioClk, int bauds, int flags)
         {
-            throw new NotImplementedException();
+            short ret = PiGpioNativeMethods.bspiOpen((ushort)gpioCS, (ushort)gpioMiso, (ushort)gpioMosi, (ushort)gpioClk, (ushort)bauds, unchecked((ushort)flags));
+            if (ret < 0)
+                throw new PiGPIOException(ret);
         }
 
-        void IPiGPIO.BSpiClose(int gpioCS)
+        public void BSpiClose(int gpioCS)
         {
-            throw new NotImplementedException();
+            short ret = PiGpioNativeMethods.bspiClose((ushort)gpioCS);
+            if (ret < 0)
+                throw new PiGPIOException(ret);
         }
 
         byte[] IPiGPIO.BSpiXfer(int gpioCS, byte[] txBuffer)
         {
-            throw new NotImplementedException();
+            byte[] rxBuffer = new byte[txBuffer.Length];
+            GCHandle tx = GCHandle.Alloc(tx, GCHandleType.Pinned);
+            try
+            {
+                GCHandle rx = GCHandle.Alloc(rxBuffer, GCHandleType.Pinned);
+                try
+                {
+                    short ret = PiGpioNativeMethods.bspiXfer((ushort)gpioCS, tx.AddrOfPinnedObject(), rx.AddrOfPinnedObject(), (ushort)txBuffer.Length);
+                    if (ret < 0)
+                        throw new PiGPIOException(ret);
+                }
+                finally
+                {
+                    rx.Free();
+                }
+            }
+            finally
+            {
+                tx.Free();
+            }
+            return rxBuffer;
         }
 
         public int ReadBits_0_31()

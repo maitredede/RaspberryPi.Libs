@@ -74,6 +74,15 @@ namespace RaspberryPi.PiGPIO.Interop
 
         [DllImport(LIB, EntryPoint = "spiXfer", CallingConvention = CallingConvention.Cdecl)]
         public static extern short spiXfer(ushort handle, IntPtr txBuf, IntPtr rxBuf, ushort count);
+
+        [DllImport(LIB, EntryPoint = "bbSPIOpen", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short bspiOpen(ushort cs, ushort miso, ushort mosi, ushort sclk, ushort bauds, ushort flags);
+
+        [DllImport(LIB, EntryPoint = "bbSPIClose", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short bspiClose(ushort cs);
+
+        [DllImport(LIB, EntryPoint = "bbSPIXfer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short bspiXfer(ushort cs, IntPtr inBuff, IntPtr outBuff, ushort count);
         #endregion
 
         [DllImport(LIB, EntryPoint = "fileOpen", CallingConvention = CallingConvention.Cdecl)]
