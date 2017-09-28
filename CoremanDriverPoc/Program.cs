@@ -111,6 +111,7 @@ namespace CoremanDriverPoc
                 bool a = false;
                 bool b = false;
                 bool o = false;
+                bool c = false;
                 int pos = 0;
                 while (run)
                 {
@@ -122,6 +123,7 @@ namespace CoremanDriverPoc
                         case ConsoleKey.L: Strobe(); Console.Write("L"); break;
                         case ConsoleKey.A: a = !a; gpio.Write(drv.Layout.A, a); Console.Write(a ? "A" : "a"); break;
                         case ConsoleKey.B: b = !b; gpio.Write(drv.Layout.B, b); Console.Write(b ? "B" : "b"); break;
+                        case ConsoleKey.C: c = !c; gpio.Write(drv.Layout.C, c); Console.Write(c ? "C" : "c"); break;
                         case ConsoleKey.O: o = !o; gpio.Write(drv.Layout.OE, o); Console.Write(o ? "O" : "o"); break;
                         case ConsoleKey.Add: pos = Math.Min(63, pos + 1); Console.Write("+{0:X2}", pos); break;
                         case ConsoleKey.Subtract: pos = Math.Max(0, pos - 1); Console.Write("-{0:X2}", pos); break;

@@ -19,7 +19,7 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede
         {
             this.UseOutput(this.m_pins.A, false);
             this.UseOutput(this.m_pins.B, false);
-            //this.UseOutput(this.m_pins.C, false);
+            this.UseOutput(this.m_pins.C, false);
             //this.UseOutput(this.m_pins.D, false);
             //this.UseOutput(this.m_pins.E, false);
             this.UseOutput(this.m_pins.R1, false);
