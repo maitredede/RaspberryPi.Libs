@@ -9,7 +9,10 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede.PixelFormats
 {
     public struct BitPixel : IPixel<BitPixel>
     {
+        private static readonly Vector4 v4Off = new Vector4(0, 0, 0, 1);
+
         public bool Value { get; set; }
+
         public BitPixel(bool value)
         {
             this.Value = value;
@@ -57,7 +60,7 @@ namespace RaspberryPi.PiGPIO.Drivers.Dede.PixelFormats
 
         public Vector4 ToVector4()
         {
-            return this.Value ? Vector4.One : Vector4.Zero;
+            return this.Value ? Vector4.One : v4Off;
         }
 
         public static readonly BitPixel On = new BitPixel(true);
