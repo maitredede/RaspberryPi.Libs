@@ -7,10 +7,10 @@ solution: RaspberryPi.Libs.sln
 addons:
   apt:
     packages:
-      - debootstrap
+      # - debootstrap
       - qemu-user-static
       - binfmt-support
-      - sbuild
+      # - sbuild
       - qemu-system-arm
 install:
 # Rpi Emulation
