@@ -4,7 +4,22 @@ sudo: false
 mono: none
 dotnet: 2.0.0
 solution: RaspberryPi.Libs.sln
+addons:
+  apt:
+    packages:
+      - debootstrap
+      - qemu-user-static
+      - binfmt-support
+      - sbuild
+      - qemu-system-arm
 install:
+# Rpi Emulation
+  - git clone https://github.com/dhruvvyas90/qemu-rpi-kernel.git --depth 1
+  - wget https://downloads.raspberrypi.org/raspbian_lite_latest -O /tmp/raspbian_lite_latest.zip
+# Cross compilation
+  - git clone https://github.com/raspberrypi/tools rpi-tools --depth 1
+# Dotnet
   - dotnet restore $TRAVIS_SOLUTION
+# https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 script:
   - dotnet build $TRAVIS_SOLUTION
