@@ -127,6 +127,8 @@ namespace CoremanDriverPoc
                         case ConsoleKey.O: o = !o; gpio.Write(drv.Layout.OE, o); Console.Write(o ? "O" : "o"); break;
                         case ConsoleKey.Add: pos = Math.Min(63, pos + 1); Console.Write("+{0:X2}", pos); break;
                         case ConsoleKey.Subtract: pos = Math.Max(0, pos - 1); Console.Write("-{0:X2}", pos); break;
+                        case ConsoleKey.I:
+                            Interleaved(pos); Console.Write("i"); break;
                     }
                 }
             }
@@ -146,6 +148,7 @@ namespace CoremanDriverPoc
             Console.WriteLine("O\tToggle OE");
             Console.WriteLine("+\tPixel +1");
             Console.WriteLine("-\tPixel -1");
+            Console.WriteLine("i\tInterleaved test 1");
         }
 
         private static void Clock()
@@ -214,6 +217,75 @@ namespace CoremanDriverPoc
                 bool disp = pix == col;
 
                 TransmitPixel(disp && r1, disp && g1, disp && b1);
+            }
+        }
+
+        private static void Interleaved(int pix)
+        {
+            for (int col = 0; col < 64; col++)
+            {
+                g.Write(drv.Layout.R1, cr);
+                g.Write(drv.Layout.G1, cg);
+                g.Write(drv.Layout.B1, cb);
+
+                g.Write(drv.Layout.R2, false);
+                g.Write(drv.Layout.G2, false);
+                g.Write(drv.Layout.B2, false);
+
+                Clock();
+
+                g.Write(drv.Layout.A, true);
+                g.Write(drv.Layout.A, false);
+
+                NextIColor();
+            }
+        }
+
+        private static bool cr = true;
+        private static bool cg = false;
+        private static bool cb = false;
+
+        private static void NextIColor()
+        {
+            if (cr)
+            {
+                cr = false;
+                cg = true;
+                return;
+            }
+            if (cg)
+            {
+                cg = false;
+                cb = true;
+                return;
+            }
+            if (cb)
+            {
+                cb = false;
+                cr = true;
+                return;
+            }
+        }
+
+        private static void Interleaved2(int pix)
+        {
+
+            for (int col = 0; col < 64; col++)
+            {
+                g.Write(drv.Layout.R1, cr);
+                g.Write(drv.Layout.G1, cg);
+                g.Write(drv.Layout.B1, cb);
+
+                g.Write(drv.Layout.R2, false);
+                g.Write(drv.Layout.G2, false);
+                g.Write(drv.Layout.B2, false);
+
+                Clock();
+
+                g.Write(drv.Layout.A, true);
+                g.Write(drv.Layout.A, false);
+
+                NextIColor();
             }
         }
 
