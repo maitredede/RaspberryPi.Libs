@@ -23,7 +23,7 @@ install:
   - rm /tmp/raspbian_lite_latest.zip
 # Rpi image mount
   - mkdir -p ~/raspbian
-  - sudo mount -o loop,offset=67108864 $(IMAGE) ~/raspbian
+  - sudo mount -o loop,offset=67108864 ${IMAGE} ~/raspbian
 # Rpi Emulation
   # - git clone https://github.com/dhruvvyas90/qemu-rpi-kernel.git --depth 1
   # - qemu-img convert -f raw -O qcow2 /tmp/raspbian_lite_latest.zip raspbian-stretch-lite.qcow
