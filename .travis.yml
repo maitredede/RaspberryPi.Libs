@@ -22,8 +22,6 @@ install:
   - unzip /tmp/raspbian_lite_latest.zip
   - rm /tmp/raspbian_lite_latest.zip
 # Rpi image mount
-  - mkdir -p ~/raspbian
-  - sudo mount -o loop,offset=67108864 ${IMAGE} ~/raspbian
 # Rpi Emulation
   # - git clone https://github.com/dhruvvyas90/qemu-rpi-kernel.git --depth 1
   # - qemu-img convert -f raw -O qcow2 /tmp/raspbian_lite_latest.zip raspbian-stretch-lite.qcow
@@ -34,4 +32,13 @@ install:
   - dotnet restore $TRAVIS_SOLUTION
 # https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 script:
+#Pi image mount/update
+  - export MOUNT_POINT=~/raspbian
+  - mkdir -p ${MOUNT_POINT}
+  - sudo mount -o loop,offset=48234496 ${IMAGE} ${MOUNT_POINT}
+  - sudo chroot ${MOUNT_POINT} apt-get update
+  - sudo chroot ${MOUNT_POINT} apt-get upgrade
+#Pi dependencies
+  - sudo chroot ${MOUNT_POINT} apt-get install -y git build-essential curl libunwind8 gettext
+#dotnet
   - dotnet build $TRAVIS_SOLUTION
