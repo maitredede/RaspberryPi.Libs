@@ -1,23 +1,35 @@
 language: csharp
 dist: trusty
-sudo: false
+sudo: required
 mono: none
 dotnet: 2.0.0
 solution: RaspberryPi.Libs.sln
 addons:
   apt:
     packages:
-      # - debootstrap
+      - debootstrap
       - qemu-user-static
       - binfmt-support
-      # - sbuild
+      - sbuild
       - qemu-system-arm
+cache:
+  directories:
+    - $HOME/.nuget
 install:
-# Rpi Emulation
-  - git clone https://github.com/dhruvvyas90/qemu-rpi-kernel.git --depth 1
+# Rpi image
   - wget https://downloads.raspberrypi.org/raspbian_lite_latest -O /tmp/raspbian_lite_latest.zip
+  - export IMAGE=`unzip -Z1 /tmp/raspbian_lite_latest.zip`
+  - unzip /tmp/raspbian_lite_latest.zip
+  - rm /tmp/raspbian_lite_latest.zip
+# Rpi image mount
+  - mkdir -p ~/raspbian
+  - sudo mount -o loop,offset=67108864 $(IMAGE) ~/raspbian
+# Rpi Emulation
+  # - git clone https://github.com/dhruvvyas90/qemu-rpi-kernel.git --depth 1
+  # - qemu-img convert -f raw -O qcow2 /tmp/raspbian_lite_latest.zip raspbian-stretch-lite.qcow
+  # - qemu-img resize raspbian-stretch-lite.qcow +6G
 # Cross compilation
-  - git clone https://github.com/raspberrypi/tools rpi-tools --depth 1
+  # - git clone https://github.com/raspberrypi/tools rpi-tools --depth 1
 # Dotnet
   - dotnet restore $TRAVIS_SOLUTION
 # https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
