@@ -5,15 +5,13 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public sealed class NfcModulation
+    [StructLayout(LayoutKind.Sequential)]
+    public struct NfcModulation
     {
-        public NfcModulationType ModulationType { get; set; }
-        public NfcBaudRate BaudRate { get; set; }
-
-        public NfcModulation()
-        {
-        }
+        [MarshalAs(UnmanagedType.I4)]
+        public NfcModulationType ModulationType;
+        [MarshalAs(UnmanagedType.I4)]
+        public NfcBaudRate BaudRate;
 
         public NfcModulation(NfcModulationType type, NfcBaudRate rate)
         {

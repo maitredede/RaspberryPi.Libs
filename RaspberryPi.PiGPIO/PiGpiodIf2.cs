@@ -229,5 +229,10 @@ namespace RaspberryPi.PiGPIO
         {
             throw new NotImplementedException();
         }
+
+        void IPiGPIO.GlitchFilter(int gpio, int steady)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

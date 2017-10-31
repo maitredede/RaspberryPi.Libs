@@ -4,5 +4,5 @@ using System.Text;
 
 namespace RaspberryPi.PiGPIO
 {
-    public delegate void GpioCallback(int port, Edge egde, long tick);
+    public delegate void GpioCallback(int port, Edge edge, long tick);
 }

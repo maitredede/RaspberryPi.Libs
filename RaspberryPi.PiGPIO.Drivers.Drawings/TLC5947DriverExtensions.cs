@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace RaspberryPi.PiGPIO.Drivers
 {
-    public static class PWMChannelDriverExtensions
+    public static class TLC5947DriverExtensions
     {
         /// <summary>
         /// Set PWM for a RGB LED
@@ -13,11 +13,11 @@ namespace RaspberryPi.PiGPIO.Drivers
         /// <param name="r">R value</param>
         /// <param name="g">G value</param>
         /// <param name="b">B value</param>
-        public static void SetLED(this IPWMChannelDriver comp, int ledNum, int r, int g, int b)
+        public static void SetLED(this ITLC5947 comp, int ledNum, byte r, byte g, byte b)
         {
-            comp.SetPWM(ledNum * 3, r);
-            comp.SetPWM(ledNum * 3 + 1, g);
-            comp.SetPWM(ledNum * 3 + 2, b);
+            comp.SetPWM(ledNum * 3, (int)(r * colorRatio));
+            comp.SetPWM(ledNum * 3 + 1, (int)(g * colorRatio));
+            comp.SetPWM(ledNum * 3 + 2, (int)(b * colorRatio));
         }
 
         private const double colorRatio = 4095.0 / 255.0;
@@ -27,9 +27,9 @@ namespace RaspberryPi.PiGPIO.Drivers
         /// <param name="comp">The component</param>
         /// <param name="ledNum">LED number</param>
         /// <param name="color"></param>
-        public static void SetLED(this IPWMChannelDriver comp, int ledNum, Color color)
+        public static void SetLED(this ITLC5947 comp, int ledNum, Color color)
         {
-            comp.SetLED(ledNum, (int)(color.R * colorRatio), (int)(color.G * colorRatio), (int)(color.B * colorRatio));
+            comp.SetLED(ledNum, color.R, color.G, color.B);
         }
     }
 }

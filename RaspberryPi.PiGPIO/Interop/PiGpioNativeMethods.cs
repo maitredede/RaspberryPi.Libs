@@ -46,6 +46,8 @@ namespace RaspberryPi.PiGPIO.Interop
         #region Advanced
         [DllImport(LIB, EntryPoint = "gpioNoiseFilter", CallingConvention = CallingConvention.Cdecl)]
         public static extern short NoiseFilter(ushort gpio, ushort steady, ushort active);
+        [DllImport(LIB, EntryPoint = "gpioGlitchFilter", CallingConvention = CallingConvention.Cdecl)]
+        public static extern short GlitchFilter(ushort gpio, ushort steady);
         #endregion
 
         #region I2C

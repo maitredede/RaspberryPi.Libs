@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RaspberryPi.Userland;
+using RaspberryPi.Userland.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,10 +10,10 @@ namespace RaspberryPi.Camera
 {
     public class MmalImageProvider : ICameraStillImageProvider
     {
-        private readonly BcmHost m_bcm;
+        private readonly IBcmHost m_bcm;
         private readonly ILogger<ICameraStillImageProvider> m_logger;
 
-        public MmalImageProvider(BcmHost host, ILogger<ICameraStillImageProvider> logger)
+        public MmalImageProvider(IBcmHost host, ILogger<ICameraStillImageProvider> logger)
         {
             this.m_bcm = host;
             this.m_logger = logger;
