@@ -10,9 +10,9 @@ namespace RaspberryPi.LibFreefare.Interop
         public const string LIB = "libfreefare";
 
         [DllImport(LIB, EntryPoint = "freefare_get_tags", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr[] freefare_get_tags(IntPtr nfcDevice);
+        public static extern IntPtr freefare_get_tags(IntPtr nfcDevice);
         [DllImport(LIB, EntryPoint = "freefare_free_tags", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void freefare_free_tags(IntPtr[] tags);
+        public static extern void freefare_free_tags(IntPtr tags);
         [DllImport(LIB, EntryPoint = "freefare_free_tag", CallingConvention = CallingConvention.Cdecl)]
         public static extern void freefare_free_tag(IntPtr tag);
 

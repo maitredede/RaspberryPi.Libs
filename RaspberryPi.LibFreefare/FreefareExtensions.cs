@@ -1,20 +1,20 @@
-﻿using RaspberryPi.LibFreefare.Interop;
-using RaspberryPi.LibNFC;
+﻿using RaspberryPi.LibFreefare;
+using RaspberryPi.LibFreefare.Interop;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
-namespace RaspberryPi.LibFreefare
+namespace RaspberryPi.LibNFC
 {
     public static class FreefareExtensions
     {
-        public static FreefareTag[] FreefareGetTags(this NfcDevice device)
+        public static FreefareTagList FreefareGetTags(this NfcDevice device)
         {
-            IntPtr[] ptr = NativeMethods.freefare_get_tags(device.Handle);
-            for(int i = 0; i < ptr.Length; i++)
-            {
-
-            }
+            IntPtr arrPtr = NativeMethods.freefare_get_tags(device.Handle);
+            if (arrPtr == IntPtr.Zero)
+                throw new FreefareException("Error listing tags");
+            return new FreefareTagList(arrPtr);
         }
     }
 }

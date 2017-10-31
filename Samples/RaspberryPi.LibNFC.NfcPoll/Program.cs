@@ -57,25 +57,42 @@ namespace RaspberryPi.LibNFC.NfcPoll
                     INfcInitiator initiator = device.InitInitiator(false);
                     Console.WriteLine("NFC reader opened");
                     Console.WriteLine("NFC reader name: {0}", device.Name);
-                    Console.WriteLine($"NFC device will poll during {pollNr * modulations.Length * period * 150}ms ({pollNr} pollings of {period * 150}ms for {modulations.Length} modulations)");
 
-                    NfcTarget target = null;
-                    do
+                    while (true)
                     {
-                        target = initiator.Poll(modulations, pollNr, period);
+                        using (var tags = device.FreefareGetTags())
+                        {
+                            if (tags == null)
+                            {
+                                Console.WriteLine("Tags is null");
+                                return;
+                            }
+                            Console.WriteLine("Found tags : {0}", tags.Count);
+                            foreach (var tag in tags)
+                            {
+                                Console.WriteLine("  {0}: type={1} name={2}", tag.GetType().Name, tag.Type, tag.Name);
+                            }
+                        }
                     }
-                    while (target == null);
+
+                    //Console.WriteLine($"NFC device will poll during {pollNr * modulations.Length * period * 150}ms ({pollNr} pollings of {period * 150}ms for {modulations.Length} modulations)");
+                    //NfcTarget target = null;
+                    //do
+                    //{
+                    //    target = initiator.Poll(modulations, pollNr, period);
+                    //}
+                    //while (target == null);
                     //NfcInitiatorTarget target = await initiator.PollAsync(modulations, period, cts.Token);
-                    Console.WriteLine("Found receiver device");
+                    //Console.WriteLine("Found receiver device");
 
-                    //TODO card handling read/write/info
+                    ////TODO card handling read/write/info
 
-                    while (target.IsPresent())
-                    {
-                        Thread.Sleep(10);
-                    }
+                    //while (target.IsPresent())
+                    //{
+                    //    Thread.Sleep(10);
+                    //}
 
-                    Console.WriteLine("Receiver device removed");
+                    //Console.WriteLine("Receiver device removed");
                 }
             }
         }

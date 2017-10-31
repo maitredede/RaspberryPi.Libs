@@ -44,13 +44,6 @@ namespace RaspberryPi.LibNFC.Interop
         public static extern NfcError initiator_init(IntPtr device);
         [DllImport(LIB, EntryPoint = "nfc_initiator_init_secure_element", CallingConvention = CallingConvention.Cdecl)]
         public static extern NfcError initiator_init_secure_element(IntPtr device);
-
-        //[DllImport(LIB, EntryPoint = "nfc_initiator_poll_target", CallingConvention = CallingConvention.Cdecl)]
-        ////public static extern int initiator_poll_target(IntPtr device,
-        ////     [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]
-        ////    NfcModulation[] pnmTargetTypes, int szTargetTypes, byte uiPollNr, byte uiPeriod, out IntPtr pnt);
-        //public static extern int initiator_poll_target(IntPtr device, IntPtr pnmTargetTypes, uint szTargetTypes, byte uiPollNr, byte uiPeriod, ref IntPtr pnt);
-
         [DllImport(LIB, EntryPoint = "nfc_initiator_poll_target", CallingConvention = CallingConvention.Cdecl)]
         public static extern int initiator_poll_target(IntPtr device,
             [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]NfcModulation[] pnmTargetTypes,
@@ -62,8 +55,11 @@ namespace RaspberryPi.LibNFC.Interop
         [DllImport(LIB, EntryPoint = "nfc_initiator_target_is_present", CallingConvention = CallingConvention.Cdecl)]
         public static extern NfcError initiator_target_is_present(IntPtr device, IntPtr pnt);
 
-        //NFC_EXPORT int nfc_initiator_select_passive_target(nfc_device* pnd, const nfc_modulation nm, const uint8_t* pbtInitData, const size_t szInitData, nfc_target *pnt);
+        [DllImport(LIB, EntryPoint = "nfc_initiator_list_passive_targets", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int initiator_list_passive_targets(IntPtr device, NfcModulation modulation, IntPtr targets, int targetsCount);
         //NFC_EXPORT int nfc_initiator_list_passive_targets(nfc_device* pnd, const nfc_modulation nm, nfc_target ant[], const size_t szTargets);
+
+            //NFC_EXPORT int nfc_initiator_select_passive_target(nfc_device* pnd, const nfc_modulation nm, const uint8_t* pbtInitData, const size_t szInitData, nfc_target *pnt);
         //NFC_EXPORT int nfc_initiator_select_dep_target(nfc_device* pnd, const nfc_dep_mode ndm, const nfc_baud_rate nbr, const nfc_dep_info* pndiInitiator, nfc_target *pnt, const int timeout);
         //NFC_EXPORT int nfc_initiator_poll_dep_target(nfc_device* pnd, const nfc_dep_mode ndm, const nfc_baud_rate nbr, const nfc_dep_info* pndiInitiator, nfc_target *pnt, const int timeout);
         //NFC_EXPORT int nfc_initiator_deselect_target(nfc_device* pnd);

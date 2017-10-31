@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC
 {
-    public sealed class NfcDevice : IDisposable, INfcInitiator
+    public sealed class NfcDevice : IDisposable, INfcInitiator, INfcEmulatedTag
     {
         private readonly IntPtr m_ptr;
 
@@ -64,7 +64,7 @@ namespace RaspberryPi.LibNFC
             return this;
         }
 
-        //public NfcEmulatedTag InitEmulatedTag(Interop.NfcTarget target)
+        //public INfcEmulatedTag InitEmulatedTag(Interop.NfcTarget target)
         //{
         //    //int rxLength;
         //    //IntPtr rx;
@@ -128,22 +128,41 @@ namespace RaspberryPi.LibNFC
             NfcException.Raise(err);
         }
 
-
         public NfcError LastError { get { return NativeMethods.device_get_last_error(this.m_ptr); } }
+
+        //NfcTarget INfcInitiator.Poll(NfcModulation[] modulations, byte pollNr, byte period)
+        //{
+        //    this.SetProperty(NfcProperty.NP_ACTIVATE_FIELD, false);
+        //    this.SetProperty(NfcProperty.NP_HANDLE_CRC, true);
+        //    this.SetProperty(NfcProperty.NP_HANDLE_PARITY, true);
+        //    this.SetProperty(NfcProperty.NP_AUTO_ISO14443_4, true);
+        //    this.SetProperty(NfcProperty.NP_ACTIVATE_FIELD, true);
+
+        //    NfcTarget[] targets = new NfcTarget[10];
+        //    GCHandle h = GCHandle.Alloc(targets, GCHandleType.Pinned);
+        //    try
+        //    {
+        //        int count = NativeMethods.initiator_list_passive_targets(this.m_ptr, modulations[0], h.AddrOfPinnedObject(), targets.Length);
+        //        if (count < 0)
+        //            NfcException.Raise((NfcError)count);
+        //        if (count == 0)
+        //            return null;
+        //    }
+        //    finally
+        //    {
+        //        h.Free();
+        //    }
+        //}
 
         NfcTarget INfcInitiator.Poll(NfcModulation[] modulations, byte pollNr, byte period)
         {
             IntPtr nfcTarget = IntPtr.Zero;
             int count;
 
-            //HACK
-            modulations = new NfcModulation[] { modulations[0] };
-
             GCHandle gc = GCHandle.Alloc(modulations, GCHandleType.Pinned);
             try
             {
-                //int size = Marshal.SizeOf<nfc_target>();
-                int size = 283;
+                int size = Marshal.SizeOf<Interop.NfcTarget>();
                 nfcTarget = Marshal.AllocHGlobal(size);
                 Console.WriteLine("Allocated nfcTarget memory. size={0} ptr={1}", size, nfcTarget);
                 count = NativeMethods.initiator_poll_target(this.m_ptr, modulations, (uint)modulations.Length, pollNr, period, nfcTarget);
@@ -154,7 +173,6 @@ namespace RaspberryPi.LibNFC
                 Marshal.FreeHGlobal(nfcTarget);
                 gc.Free();
             }
-            // count = NativeMethods.initiator_poll_target(this.m_device.Handle, modulations, modulations.Length, pollNr, period, out nfcTarget);
 
             if (count < 0)
             {

@@ -3,31 +3,48 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace RaspberryPi.LibFreefare
 {
     public sealed class FreefareTagList : IDisposable, ICollection<FreefareTag>
     {
-        private readonly IntPtr[] m_ptrs;
+        private readonly IntPtr m_ptr;
         private readonly FreefareTag[] m_tags;
 
-        internal FreefareTagList(IntPtr[] ptrs)
+        internal FreefareTagList(IntPtr ptr)
         {
-            this.m_ptrs = ptrs;
+            this.m_ptr = ptr;
 
-            this.m_tags = new FreefareTag[this.m_ptrs.Length];
-            for (int i = 0; i < this.m_ptrs.Length; i++)
+            List<FreefareTag> lst = new List<FreefareTag>();
+            int i = 0;
+            IntPtr ptrTag;
+            while ((ptrTag = Marshal.ReadIntPtr(this.m_ptr, i++)) != IntPtr.Zero)
             {
-                this.m_tags[i] = new FreefareTag(this.m_ptrs[i], false);
+                Console.WriteLine("i={0} ptr={1}", i, ptrTag);
+
+                TagType type = NativeMethods.freefare_get_tag_type(ptrTag);
+                FreefareTag tag;
+                switch (type)
+                {
+                    case TagType.NTAG_21x:
+                        tag = new NTAG21xTag(ptrTag, false);
+                        break;
+                    default:
+                        tag = new GenericTag(ptrTag, false);
+                        break;
+                }
+                lst.Add(tag);
             }
+            this.m_tags = lst.ToArray();
         }
+
+        public int Count => this.m_tags.Length;
+
+        public bool IsReadOnly => true;
 
         #region IDisposable Support
         private bool disposedValue = false; // Pour détecter les appels redondants
-
-        public int Count => throw new NotImplementedException();
-
-        public bool IsReadOnly => throw new NotImplementedException();
 
         void Dispose(bool disposing)
         {
@@ -38,7 +55,7 @@ namespace RaspberryPi.LibFreefare
                     // TODO: supprimer l'état managé (objets managés).
                 }
 
-                NativeMethods.freefare_free_tags(this.m_ptrs);
+                NativeMethods.freefare_free_tags(this.m_ptr);
 
                 disposedValue = true;
             }
@@ -71,7 +88,7 @@ namespace RaspberryPi.LibFreefare
 
         public bool Contains(FreefareTag item)
         {
-            for(int i = 0; i < this.m_tags.Length; i++)
+            for (int i = 0; i < this.m_tags.Length; i++)
             {
                 if (this.m_tags[i].Equals(item))
                     return true;
@@ -79,7 +96,7 @@ namespace RaspberryPi.LibFreefare
             return false;
         }
 
-        public void CopyTo(FreefareTag[] array, int arrayIndex)
+        void ICollection<FreefareTag>.CopyTo(FreefareTag[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
@@ -91,7 +108,7 @@ namespace RaspberryPi.LibFreefare
 
         public IEnumerator<FreefareTag> GetEnumerator()
         {
-            return (IEnumerator<FreefareTag>)this.m_tags.GetEnumerator();
+            return ((IEnumerable<FreefareTag>)this.m_tags).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

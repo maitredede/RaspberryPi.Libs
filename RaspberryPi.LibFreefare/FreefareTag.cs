@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RaspberryPi.LibFreefare
 {
-    public sealed class FreefareTag : IDisposable
+    public abstract class FreefareTag : IDisposable
     {
         private readonly IntPtr m_ptr;
         private readonly bool m_dispose;
