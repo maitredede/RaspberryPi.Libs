@@ -112,23 +112,38 @@ namespace CoremanDriverPoc
                 bool b = false;
                 bool o = false;
                 bool c = false;
+                bool l = false;
+
+
+                g.Write(drv.Layout.A, a);
+                g.Write(drv.Layout.B, b);
+                g.Write(drv.Layout.OE, o);
+                g.Write(drv.Layout.Strobe, l);
+                g.Write(drv.Layout.Clock, c);
+
                 int pos = 0;
                 while (run)
                 {
+                    if (!Console.KeyAvailable)
+                    {
+                        Thread.Sleep(10);
+                        continue;
+                    }
                     var key = Console.ReadKey(true);
                     switch (key.Key)
                     {
                         case ConsoleKey.F1: KeyHelp(); break;
                         case ConsoleKey.D: TransmitRowPixel(pos, false, false, true); Console.Write("d"); break;
-                        case ConsoleKey.L: Strobe(); Console.Write("L"); break;
                         case ConsoleKey.A: a = !a; gpio.Write(drv.Layout.A, a); Console.Write(a ? "A" : "a"); break;
                         case ConsoleKey.B: b = !b; gpio.Write(drv.Layout.B, b); Console.Write(b ? "B" : "b"); break;
                         case ConsoleKey.C: c = !c; gpio.Write(drv.Layout.C, c); Console.Write(c ? "C" : "c"); break;
                         case ConsoleKey.O: o = !o; gpio.Write(drv.Layout.OE, o); Console.Write(o ? "O" : "o"); break;
+                        case ConsoleKey.L: l = !l; gpio.Write(drv.Layout.Strobe, l); Console.Write(l ? "L" : "l"); break;
                         case ConsoleKey.Add: pos = Math.Min(63, pos + 1); Console.Write("+{0:X2}", pos); break;
                         case ConsoleKey.Subtract: pos = Math.Max(0, pos - 1); Console.Write("-{0:X2}", pos); break;
-                        case ConsoleKey.I:
-                            Interleaved(pos); Console.Write("i"); break;
+                        case ConsoleKey.I: Interleaved(); Console.Write("i"); break;
+                        case ConsoleKey.U: Interleaved2(); Console.Write("u"); break;
+                        case ConsoleKey.X: ChessBoardScan(); break;
                     }
                 }
             }
@@ -141,14 +156,16 @@ namespace CoremanDriverPoc
             if (clear)
                 Console.Clear();
             Console.WriteLine("F1\tHelp");
-            Console.WriteLine("D\tTransmit 1 row data");
-            Console.WriteLine("L\tStrobe latch");
+            Console.WriteLine("D\tTransmit 64 row data (set RGB + clock x64)");
             Console.WriteLine("A\tToggle A");
             Console.WriteLine("B\tToggle B");
             Console.WriteLine("O\tToggle OE");
+            Console.WriteLine("L\tTootle Strobe");
             Console.WriteLine("+\tPixel +1");
             Console.WriteLine("-\tPixel -1");
             Console.WriteLine("i\tInterleaved test 1");
+            Console.WriteLine("u\tInterleaved test 2");
+            Console.WriteLine("n\tNext color");
         }
 
         private static void Clock()
@@ -181,13 +198,6 @@ namespace CoremanDriverPoc
 
         private static void TransmitPixel(bool r1, bool g1, bool b1)
         {
-            g.Write(drv.Layout.R1, r1);
-            g.Write(drv.Layout.G1, g1);
-            g.Write(drv.Layout.B1, b1);
-
-            g.Write(drv.Layout.R2, false);
-            g.Write(drv.Layout.G2, false);
-            g.Write(drv.Layout.B2, false);
 
             Clock();
         }
@@ -220,26 +230,58 @@ namespace CoremanDriverPoc
             }
         }
 
-        private static void Interleaved(int pix)
+        private static void Interleaved()
         {
-            for (int col = 0; col < 64; col++)
+            RGB[][] pattern = new RGB[4][];
+            for (int row = 0; row < pattern.Length; row++)
             {
-                g.Write(drv.Layout.R1, cr);
-                g.Write(drv.Layout.G1, cg);
-                g.Write(drv.Layout.B1, cb);
-
-                g.Write(drv.Layout.R2, false);
-                g.Write(drv.Layout.G2, false);
-                g.Write(drv.Layout.B2, false);
-
-                Clock();
+                Console.WriteLine();
+                pattern[row] = new RGB[64];
+                for (int col = 0; col < pattern[row].Length; col++)
+                {
+                    int y = (pattern.Length - row - 1) - ((col / 2) % pattern.Length);
+                    if ((row + col * 2) % 5 == 0)
+                    {
+                        Console.Write("+");
+                        pattern[row][col] = new RGB { R = false, G = true, B = false };
+                    }
+                    else
+                    {
+                        pattern[row][col] = new RGB { R = true, G = false, B = false };
+                        Console.Write(".");
+                    }
+                }
+            }
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                Console.WriteLine();
+                for (int col = 0; col < pattern[i].Length; col++)
+                {
+                    RGB c = pattern[i][col];
+                    if (c.G)
+                    {
+                        Console.Write("|");
+                    }
+                    else
+                    {
+                        Console.Write("_");
+                    }
+                    SetC1(c);
+                    Clock();
+                }
 
                 g.Write(drv.Layout.A, true);
                 g.Write(drv.Layout.A, false);
 
-                NextIColor();
             }
+            g.Write(drv.Layout.B, true);
+            Strobe();
+            g.Write(drv.Layout.B, false);
+            Console.WriteLine();
         }
+
+
+        private static int cSeq = 0;
 
         private static bool cr = true;
         private static bool cg = false;
@@ -247,47 +289,38 @@ namespace CoremanDriverPoc
 
         private static void NextIColor()
         {
-            if (cr)
+            switch (cSeq)
             {
-                cr = false;
-                cg = true;
-                return;
+                case 0: cr = true; cg = false; cb = false; break;
+                case 1: cr = false; cg = true; cb = false; break;
+                case 2: cr = false; cg = false; cb = true; break;
+                case 3: cr = true; cg = true; cb = true; break;
+                case 4: cr = false; cg = false; cb = false; break;
             }
-            if (cg)
-            {
-                cg = false;
-                cb = true;
-                return;
-            }
-            if (cb)
-            {
-                cb = false;
-                cr = true;
-                return;
-            }
+            cSeq = (cSeq + 1) % 5;
+
+            g.Write(drv.Layout.R1, cr);
+            g.Write(drv.Layout.G1, cg);
+            g.Write(drv.Layout.B1, cb);
+
+            g.Write(drv.Layout.R2, false);
+            g.Write(drv.Layout.G2, false);
+            g.Write(drv.Layout.B2, false);
         }
 
-        private static void Interleaved2(int pix)
-        {
+        //private static void Interleaved2(int pix)
+        //{
 
-            for (int col = 0; col < 64; col++)
-            {
-                g.Write(drv.Layout.R1, cr);
-                g.Write(drv.Layout.G1, cg);
-                g.Write(drv.Layout.B1, cb);
+        //    for (int col = 0; col < 64; col++)
+        //    {
+        //        NextIColor();
+        //        Clock();
 
-                g.Write(drv.Layout.R2, false);
-                g.Write(drv.Layout.G2, false);
-                g.Write(drv.Layout.B2, false);
+        //        g.Write(drv.Layout.A, true);
+        //        g.Write(drv.Layout.A, false);
 
-                Clock();
-
-                g.Write(drv.Layout.A, true);
-                g.Write(drv.Layout.A, false);
-
-                NextIColor();
-            }
-        }
+        //    }
+        //}
 
         private static void SetAddress(bool a, bool b)
         {
@@ -313,6 +346,133 @@ namespace CoremanDriverPoc
                 if (key.Key == ConsoleKey.Enter)
                 {
                     break;
+                }
+            }
+        }
+
+        private static void Interleaved2()
+        {
+            bool a = false;
+            bool b = false;
+
+            g.Write(drv.Layout.A, a);
+            g.Write(drv.Layout.B, b);
+
+            Action setWriteA = () =>
+            {
+                a = !a;
+                g.Write(drv.Layout.A, a);
+            };
+            Action setWriteB = () =>
+            {
+                b = !b;
+                g.Write(drv.Layout.B, b);
+            };
+
+            for (int scan = 0; scan < 32; scan++)
+            {
+                for (int col = 0; col < 64; col++)
+                {
+                    NextIColor();
+                    Clock();
+                }
+                setWriteA();
+                setWriteA();
+                setWriteB();
+            }
+
+            Strobe();
+        }
+
+        private struct RGB
+        {
+            public bool R;
+            public bool G;
+            public bool B;
+
+            public static readonly RGB Red = new RGB { R = true };
+            public static readonly RGB Blue = new RGB { B = true };
+            public static readonly RGB Green = new RGB { G = true };
+        }
+
+        private static void SetC1(RGB rgb)
+        {
+            g.Write(drv.Layout.R1, rgb.R);
+            g.Write(drv.Layout.G1, rgb.G);
+            g.Write(drv.Layout.B1, rgb.B);
+        }
+
+        private static void SetC2(RGB rgb)
+        {
+            g.Write(drv.Layout.R2, rgb.R);
+            g.Write(drv.Layout.G2, rgb.G);
+            g.Write(drv.Layout.B2, rgb.B);
+        }
+
+        private static void ChessBoardScan()
+        {
+            RGB[][] board = new RGB[64][];
+            try
+            {
+                for (int row = 0; row < board.Length; row++)
+                {
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    board[row] = new RGB[64];
+                    for (int col = 0; col < board[row].Length; col++)
+                    {
+                        int a = row / 8;
+                        int b = col / 8;
+                        if (((a + b) % 2) == 0)
+                        {
+                            board[row][col] = RGB.Green;
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        }
+                        else
+                        {
+                            board[row][col] = RGB.Red;
+                            Console.BackgroundColor = ConsoleColor.DarkRed;
+                        }
+                        Console.Write(" ");
+                    }
+                }
+            }
+            finally
+            {
+                Console.ResetColor();
+            }
+            Console.WriteLine();
+
+            while (true)
+            {
+                Console.Write(".");
+                for (int scan = 0; scan < 32; scan++)
+                {
+                    g.Write(drv.Layout.OE, true);
+                    for (int row = 0; row < 32; row++)
+                    {
+                        if (row == scan)
+                        {
+                            for (int col = 0; col < 64; col++)
+                            {
+                                SetC1(board[row][col]);
+                                SetC2(board[row + 32][col]);
+                                Clock();
+                            }
+                            g.Write(drv.Layout.A, true);
+                            g.Write(drv.Layout.A, false);
+                        }
+                        else
+                        {
+                            g.Write(drv.Layout.B, true);
+                            g.Write(drv.Layout.A, true);
+                            g.Write(drv.Layout.A, false);
+                            g.Write(drv.Layout.B, false);
+                        }
+                    }
+                    Strobe();
+                    g.Write(drv.Layout.OE, false);
+                    Thread.Sleep(0);
                 }
             }
         }

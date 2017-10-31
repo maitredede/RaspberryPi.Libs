@@ -52,6 +52,17 @@ namespace RaspberryPi.PiGPIO
         /// <param name="active"></param>
         void NoiseFilter(int gpio, int steady, int active);
 
+        /// <summary>
+        /// Set a glitch filter on a GPIO
+        ///
+        /// Level changes on the GPIO u are not reported unless the level has been stable for at least stdy microseconds. The level is then reported. Level changes of less than stdy microseconds are ignored.
+        /// The filter only affects callbacks(including pipe notifications).
+        /// The R/READ, BR1, and BR2 commands are not affected.
+        /// Note, each (stable) edge will be timestamped stdy microseconds after it was first detected.
+        /// </summary>
+        /// <param name="gpio"></param>
+        /// <param name="steady"></param>
+        void GlitchFilter(int gpio, int steady);
         CallbackInfo AddCallback(int gpio, Edge either, GpioCallback callback);
         void RemoveCallback(CallbackInfo callback);
 

@@ -47,6 +47,14 @@ namespace RaspberryPi.PiGPIO
         }
 
         /// <inheritDoc />
+        public void GlitchFilter(int gpio, int steady)
+        {
+            short ret = PiGpioNativeMethods.GlitchFilter((ushort)gpio, (ushort)steady);
+            if (ret < 0)
+                throw new PiGPIOException(ret);
+        }
+
+        /// <inheritDoc />
         public void SetMode(int gpio, Mode mode)
         {
             short ret = PiGpioNativeMethods.SetMode((ushort)gpio, (ushort)mode);
@@ -388,5 +396,6 @@ namespace RaspberryPi.PiGPIO
             if (ret < 0)
                 throw new PiGPIOException(ret);
         }
+
     }
 }

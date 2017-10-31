@@ -1,4 +1,5 @@
-﻿using RaspberryPi.Userland.MMAL;
+﻿using RaspberryPi.Userland.Interfaces;
+using RaspberryPi.Userland.MMAL;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -7,7 +8,7 @@ using static RaspberryPi.Userland.Interop.BcmHostNativeMethods;
 
 namespace RaspberryPi.Userland
 {
-    public sealed class BcmHost : DisposableSingleton<BcmHost>
+    public sealed class BcmHost : DisposableSingleton<BcmHost>, IBcmHost
     {
         private readonly DisplayManager m_dispman;
         private readonly MMALManager m_mmal;

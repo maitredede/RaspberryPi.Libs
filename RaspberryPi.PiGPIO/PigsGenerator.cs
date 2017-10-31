@@ -251,5 +251,10 @@ namespace RaspberryPi.PiGPIO
         {
             this.Append($"WRITE {gpio} {(value ? 1 : 0)}");
         }
+
+        public void GlitchFilter(int gpio, int steady)
+        {
+            this.Append($"FG {gpio} {steady}");
+        }
     }
 }

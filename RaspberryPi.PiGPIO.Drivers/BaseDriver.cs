@@ -10,7 +10,7 @@ using System.Text;
 
 namespace RaspberryPi.PiGPIO.Drivers
 {
-    public abstract class BaseDriver
+    public abstract class BaseDriver : IDriver
     {
         protected readonly IPiGPIO m_gpio;
 

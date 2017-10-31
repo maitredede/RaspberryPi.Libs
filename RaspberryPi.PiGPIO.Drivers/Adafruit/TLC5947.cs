@@ -80,6 +80,11 @@ namespace RaspberryPi.PiGPIO.Drivers.Adafruit
             pwmbuffer[chan] = pwm;
         }
 
+        void IDriver.Init()
+        {
+            this.Begin();
+        }
+
         public void Begin()
         {
             this.m_pigpio.SetMode(this.clock, Mode.Output);

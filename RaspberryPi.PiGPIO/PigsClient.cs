@@ -526,16 +526,7 @@ namespace RaspberryPi.PiGPIO
             socket.RunCommand(cmd, p1, p2, p3, extension, out res);
         }
 
-        /// <summary>
-        /// Set a noise filter on a GPIO
-        /// Level changes on the GPIO <paramref name="gpio"/> are ignored until a level which has been stable for <paramref name="stdy"/> microseconds is detected. Level changes on the GPIO are then reported for <paramref name="actv"/> microseconds after which the process repeats.
-        /// The filter only affects callbacks (including pipe notifications).
-        /// The R/READ, BR1, and BR2 commands are not affected.
-        /// Note, level changes before and after the active period may be reported.Your software must be designed to cope with such reports.
-        /// </summary>
-        /// <param name="gpio"></param>
-        /// <param name="stdy"></param>
-        /// <param name="actv"></param>
+        /// <inheritDoc />
         public void NoiseFilter(int gpio, int stdy, int actv)
         {
             Commands cmd = Commands.FN;
@@ -545,6 +536,17 @@ namespace RaspberryPi.PiGPIO
             byte[] extension = BitConverter.GetBytes(actv);
             uint res;
             this.m_control.RunCommand(cmd, p1, p2, p3, extension, out res);
+        }
+
+        /// <inheritDoc />
+        public void GlitchFilter(int gpio, int stdy)
+        {
+            Commands cmd = Commands.FG;
+            uint p1 = (uint)gpio;
+            uint p2 = (uint)stdy;
+            int p3 = 0;
+            uint res;
+            this.m_control.RunCommand(cmd, p1, p2, p3, null, out res);
         }
 
         private byte[] GetBytes<T>(T str)

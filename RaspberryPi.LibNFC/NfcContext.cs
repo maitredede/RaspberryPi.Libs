@@ -7,7 +7,7 @@ namespace RaspberryPi.LibNFC
     /// <summary>
     /// NFC context
     /// </summary>
-    public sealed class NfcContext : IDisposable
+    public sealed class NfcContext : IDisposable, INfcContext
     {
         private readonly IntPtr m_ctx;
 
@@ -66,7 +66,8 @@ namespace RaspberryPi.LibNFC
             {
                 if (_version == null)
                 {
-                    _version = NativeMethods.version();
+                    IntPtr ptr = NativeMethods.version();
+                    _version = Marshal.PtrToStringAnsi(ptr);
                 }
                 return _version;
             }

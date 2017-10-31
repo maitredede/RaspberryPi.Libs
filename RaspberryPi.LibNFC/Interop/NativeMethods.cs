@@ -45,8 +45,22 @@ namespace RaspberryPi.LibNFC.Interop
         [DllImport(LIB, EntryPoint = "nfc_initiator_init_secure_element", CallingConvention = CallingConvention.Cdecl)]
         public static extern NfcError initiator_init_secure_element(IntPtr device);
 
+        //[DllImport(LIB, EntryPoint = "nfc_initiator_poll_target", CallingConvention = CallingConvention.Cdecl)]
+        ////public static extern int initiator_poll_target(IntPtr device,
+        ////     [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]
+        ////    NfcModulation[] pnmTargetTypes, int szTargetTypes, byte uiPollNr, byte uiPeriod, out IntPtr pnt);
+        //public static extern int initiator_poll_target(IntPtr device, IntPtr pnmTargetTypes, uint szTargetTypes, byte uiPollNr, byte uiPeriod, ref IntPtr pnt);
+
         [DllImport(LIB, EntryPoint = "nfc_initiator_poll_target", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int initiator_poll_target(IntPtr device, NfcModulation[] pnmTargetTypes, int szTargetTypes, byte uiPollNr, byte uiPeriod, out IntPtr pnt);
+        public static extern int initiator_poll_target(IntPtr device,
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]NfcModulation[] pnmTargetTypes,
+            uint szTargetTypes,
+            byte uiPollNr,
+            byte uiPeriod,
+            IntPtr pnt);
+
+        [DllImport(LIB, EntryPoint = "nfc_initiator_target_is_present", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError initiator_target_is_present(IntPtr device, IntPtr pnt);
 
         //NFC_EXPORT int nfc_initiator_select_passive_target(nfc_device* pnd, const nfc_modulation nm, const uint8_t* pbtInitData, const size_t szInitData, nfc_target *pnt);
         //NFC_EXPORT int nfc_initiator_list_passive_targets(nfc_device* pnd, const nfc_modulation nm, nfc_target ant[], const size_t szTargets);
@@ -57,7 +71,6 @@ namespace RaspberryPi.LibNFC.Interop
         //NFC_EXPORT int nfc_initiator_transceive_bits(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTxBits, const uint8_t* pbtTxPar, uint8_t *pbtRx, const size_t szRx, uint8_t *pbtRxPar);
         //NFC_EXPORT int nfc_initiator_transceive_bytes_timed(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTx, uint8_t *pbtRx, const size_t szRx, uint32_t *cycles);
         //NFC_EXPORT int nfc_initiator_transceive_bits_timed(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTxBits, const uint8_t* pbtTxPar, uint8_t *pbtRx, const size_t szRx, uint8_t *pbtRxPar, uint32_t* cycles);
-        //NFC_EXPORT int nfc_initiator_target_is_present(nfc_device* pnd, const nfc_target* pnt);
         #endregion
 
         #region NFC target: act as tag (i.e. MIFARE Classic) or NFC target device
@@ -69,25 +82,29 @@ namespace RaspberryPi.LibNFC.Interop
         #endregion
 
         #region Error reporting
-        //NFC_EXPORT const char* nfc_strerror(const nfc_device* pnd);
+        [DllImport(LIB, EntryPoint = "nfc_strerror", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr strerror(IntPtr device);
         //NFC_EXPORT int nfc_strerror_r(const nfc_device* pnd, char* buf, size_t buflen);
         //NFC_EXPORT void nfc_perror(const nfc_device* pnd, const char* s);
-        //NFC_EXPORT int nfc_device_get_last_error(const nfc_device* pnd);
+        [DllImport(LIB, EntryPoint = "nfc_device_get_last_error", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError device_get_last_error(IntPtr device);
         #endregion
 
         #region Special data accessors
         [DllImport(LIB, EntryPoint = "nfc_device_get_name", CallingConvention = CallingConvention.Cdecl)]
-        public static extern string device_get_name(IntPtr device);
+        public static extern IntPtr device_get_name(IntPtr device);
         [DllImport(LIB, EntryPoint = "nfc_device_get_connstring", CallingConvention = CallingConvention.Cdecl)]
-        public static extern string device_get_connstring(IntPtr device);
+        public static extern IntPtr device_get_connstring(IntPtr device);
         //NFC_EXPORT int nfc_device_get_supported_modulation(nfc_device* pnd, const nfc_mode mode,  const nfc_modulation_type**const supported_mt);
         //NFC_EXPORT int nfc_device_get_supported_baud_rate(nfc_device* pnd, const nfc_modulation_type nmt, const nfc_baud_rate**const supported_br);
         //NFC_EXPORT int nfc_device_get_supported_baud_rate_target_mode(nfc_device* pnd, const nfc_modulation_type nmt, const nfc_baud_rate**const supported_br);
         #endregion
 
         #region Properties accessors
-        //NFC_EXPORT int nfc_device_set_property_int(nfc_device* pnd, const nfc_property property, const int value);
-        //NFC_EXPORT int nfc_device_set_property_bool(nfc_device* pnd, const nfc_property property, const bool bEnable);
+        [DllImport(LIB, EntryPoint = "nfc_device_set_property_int", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError device_set_property_int(IntPtr device, NfcProperty property, int value);
+        [DllImport(LIB, EntryPoint = "nfc_device_set_property_bool", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError device_set_property_bool(IntPtr device, NfcProperty property, bool value);
         #endregion
 
         #region Misc. functions
@@ -98,15 +115,20 @@ namespace RaspberryPi.LibNFC.Interop
         //NFC_EXPORT uint8_t *iso14443a_locate_historical_bytes(uint8_t* pbtAts, size_t szAts, size_t* pszTk);
 
         //NFC_EXPORT void nfc_free(void* p);
+        [DllImport(LIB, EntryPoint = "nfc_free", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void nfc_free(IntPtr ptr);
         [DllImport(LIB, EntryPoint = "nfc_version", CallingConvention = CallingConvention.Cdecl)]
-        public static extern string version();
-        //NFC_EXPORT int nfc_device_get_information_about(nfc_device* pnd, char** buf);
+        public static extern IntPtr version();
+        [DllImport(LIB, EntryPoint = "nfc_device_get_information_about", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError device_get_information_about(IntPtr device, ref string buff);
         #endregion
 
         #region String converter functions
         //NFC_EXPORT const char* str_nfc_modulation_type(const nfc_modulation_type nmt);
         //NFC_EXPORT const char* str_nfc_baud_rate(const nfc_baud_rate nbr);
         //NFC_EXPORT int str_nfc_target(char** buf, const nfc_target* pnt, bool verbose);
+        [DllImport(LIB, EntryPoint = "str_nfc_target", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int str_nfc_target(out IntPtr buf, IntPtr device, bool verbose);
         #endregion
     }
 }
