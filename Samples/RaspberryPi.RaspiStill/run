@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+PKG_CONFIG_PATH=/opt/vc/lib/pkgconfig/
+
+gcc test.c `pkg-config mmal --cflags --libs`
+
+./a.out
+./RaspberryPi.RaspiStill
