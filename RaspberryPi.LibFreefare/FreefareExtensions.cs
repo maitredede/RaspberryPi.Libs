@@ -19,7 +19,7 @@ namespace RaspberryPi.LibNFC
         /// <returns>List of detected devices</returns>
         public static FreefareTagList FreefareGetTags(this NfcDevice device)
         {
-            IntPtr arrPtr = NativeMethods.freefare_get_tags(device.Handle);
+            IntPtr arrPtr = NativeMethods.freefare_get_tags(device.DangerousGetHandle());
             if (arrPtr == IntPtr.Zero)
                 throw new FreefareException("Error listing tags");
             return new FreefareTagList(arrPtr, device);
@@ -32,26 +32,26 @@ namespace RaspberryPi.LibNFC
 
         public static bool TasteNTag21x(this NfcTarget target)
         {
-            return NativeMethods.ntag21x_taste(target.Device.Handle, target.Handle);
+            return NativeMethods.ntag21x_taste(target.Device.DangerousGetHandle(), target.Handle);
         }
 
         public static bool TasteMifareMini(this NfcTarget target)
         {
-            return NativeMethods.mifare_mini_taste(target.Device.Handle, target.Handle);
+            return NativeMethods.mifare_mini_taste(target.Device.DangerousGetHandle(), target.Handle);
         }
         public static bool TasteMifareClassic1k(this NfcTarget target)
         {
-            return NativeMethods.mifare_classic1k_taste(target.Device.Handle, target.Handle);
+            return NativeMethods.mifare_classic1k_taste(target.Device.DangerousGetHandle(), target.Handle);
         }
         public static bool TasteMifareClassic4k(this NfcTarget target)
         {
-            return NativeMethods.mifare_classic4k_taste(target.Device.Handle, target.Handle);
+            return NativeMethods.mifare_classic4k_taste(target.Device.DangerousGetHandle(), target.Handle);
         }
         public static FreefareTag AsFreefareTag(this NfcTarget target)
         {
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
-            IntPtr ptrTag = NativeMethods.freefare_tag_new(target.Device.Handle, target.Handle);
+            IntPtr ptrTag = NativeMethods.freefare_tag_new(target.Device.DangerousGetHandle(), target.Handle);
             if (ptrTag == IntPtr.Zero)
             {
                 Console.WriteLine("A");

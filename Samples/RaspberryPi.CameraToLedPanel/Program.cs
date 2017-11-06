@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
-using RaspberryPi.Camera;
 using RaspberryPi.LibLedMatrix;
 using RaspberryPi.Userland;
 using RaspberryPi.Userland.Interfaces;
+using RaspberryPi.Userland.MMAL;
 
 namespace RaspberryPi.CameraToLedPanel
 {
@@ -46,8 +46,43 @@ namespace RaspberryPi.CameraToLedPanel
 
         private static int RunApplication(IServiceProvider svc)
         {
+            //TODO put in config
+            const int camNumber = 0;
+
             IBcmHost host = svc.GetRequiredService<IBcmHost>();
-            using()
+            CameraInfo camInfo;
+            using (var camInfoComp = host.MMAL.ComponentCreateCameraInfo())
+            {
+                Console.WriteLine("Getting camera info");
+                camInfo = camInfoComp.GetCameraInfo(camNumber);
+            }
+            Console.WriteLine($"Camera name='{camInfo.Name}' res={camInfo.Width}x{camInfo.Height}");
+            //create_camera_component
+            using (var camera = host.MMAL.ComponentCreateCamera())
+            {
+                create_camera_component(camera, camNumber);
+
+                //camera.Enable();
+            }
+
+            app.Error.WriteLine("Camera capture not implemented");
+            return -1;
+        }
+
+        private static void create_camera_component(CameraComponent camera, int camNumber)
+        {
+            Console.WriteLine($"Camera created name={camera.Name.Value} nativeName={camera.NativeName()}");
+            //camera.Dump();
+            camera.SetStereoscopicMode(StereoScopicMode.Default);
+            camera.SetCameraNum(camNumber);
+            if (camera.OutputCount == 0)
+            {
+                Console.WriteLine("Camera doesn't have output ports");
+                return;
+            }
+            //camera sensor mode
+            camera.SetSensorMode(0);
+            //TODO : camera settings events
         }
     }
 }

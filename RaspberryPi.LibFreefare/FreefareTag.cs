@@ -152,29 +152,30 @@ namespace RaspberryPi.LibFreefare
 
         private static bool FreeFareIsPresent(FreefareTag tag)
         {
-            return NativeMethods.freefare_selected_tag_is_present(tag.m_device.Handle);
+            return NativeMethods.freefare_selected_tag_is_present(tag.m_device.DangerousGetHandle());
         }
 
         private static bool FreeFareIsPresentAlternative(FreefareTag tag)
         {
-            if (tag.m_target != null)
-            {
-                return tag.m_target.IsPresent();
-            }
-            IntPtr ptrArr = NativeMethods.freefare_get_tags(tag.m_device.Handle);
-            if (ptrArr == IntPtr.Zero)
-                throw new FreefareException("Error enumerating tags: " + tag.m_device.LastError);
+            throw new NotImplementedException();
+            //if (tag.m_target != null)
+            //{
+            //    return tag.m_target.IsPresent();
+            //}
+            //IntPtr ptrArr = NativeMethods.freefare_get_tags(tag.m_device.DangerousGetHandle());
+            //if (ptrArr == IntPtr.Zero)
+            //    throw new FreefareException("Error enumerating tags: " + tag.m_device.LastError);
 
-            IntPtr ptr;
-            int i = 0;
-            while ((ptr = Marshal.ReadIntPtr(ptrArr, IntPtr.Size * i++)) != IntPtr.Zero)
-            {
-                if (ptr == tag.m_ptr)
-                {
-                    return true;
-                }
-            }
-            return false;
+            //IntPtr ptr;
+            //int i = 0;
+            //while ((ptr = Marshal.ReadIntPtr(ptrArr, IntPtr.Size * i++)) != IntPtr.Zero)
+            //{
+            //    if (ptr == tag.m_ptr)
+            //    {
+            //        return true;
+            //    }
+            //}
+            //return false;
         }
 
         public bool IsPresent()
