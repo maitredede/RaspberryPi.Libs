@@ -1,4 +1,5 @@
 ﻿using RaspberryPi.LibNFC.Interop;
+using RaspberryPi.LibNFC.Mifare;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,7 +43,7 @@ namespace RaspberryPi.LibNFC
                 int i = 0;
                 Action cancelPolling = () =>
                 {
-                    var error = NativeMethods.abort_command(data.Initiator.Handle);
+                    var error = NativeMethods.abort_command(data.Initiator.DangerousGetHandle());
                 };
                 data.CancellationToken.Register(cancelPolling);
                 while (result == null && !data.CancellationToken.IsCancellationRequested)
@@ -67,6 +68,21 @@ namespace RaspberryPi.LibNFC
             {
                 data.Tcs.TrySetResult(result);
             }
+        }
+
+        public static MifareTag SelectMifareTag(this INfcInitiator initiator)
+        {
+            NfcDevice device = (NfcDevice)initiator;
+            NfcModulation ncMifare = new NfcModulation(NfcModulationType.ISO14443A, NfcBaudRate.BR106);
+            NfcSelectedTarget target = initiator.Select(ncMifare);
+            if (target == null)
+                return null;
+
+            if (target.Target.TasteMifareClassic1k())
+            {
+                return new MifareClassic1kTag(target);
+            }
+            return new GenericTag(target);
         }
     }
 }

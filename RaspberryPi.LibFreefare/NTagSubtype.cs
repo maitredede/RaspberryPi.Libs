@@ -4,7 +4,10 @@ using System.Text;
 
 namespace RaspberryPi.LibFreefare
 {
-    public sealed class MifareDESFireKey
+    public enum NTagSubtype
     {
+        NTAG_213,
+        NTAG_215,
+        NTAG_216
     }
 }

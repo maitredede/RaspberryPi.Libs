@@ -57,12 +57,15 @@ namespace RaspberryPi.LibNFC.Interop
 
         [DllImport(LIB, EntryPoint = "nfc_initiator_list_passive_targets", CallingConvention = CallingConvention.Cdecl)]
         public static extern int initiator_list_passive_targets(IntPtr device, NfcModulation modulation, IntPtr targets, int targetsCount);
-        //NFC_EXPORT int nfc_initiator_list_passive_targets(nfc_device* pnd, const nfc_modulation nm, nfc_target ant[], const size_t szTargets);
 
-            //NFC_EXPORT int nfc_initiator_select_passive_target(nfc_device* pnd, const nfc_modulation nm, const uint8_t* pbtInitData, const size_t szInitData, nfc_target *pnt);
+        [DllImport(LIB, EntryPoint = "nfc_initiator_select_passive_target", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int initiator_select_passive_target(IntPtr device, NfcModulation modulation, IntPtr pbtInitData, int szInitData, IntPtr pnt);
+
+        [DllImport(LIB, EntryPoint = "nfc_initiator_select_passive_target", CallingConvention = CallingConvention.Cdecl)]
+        public static extern NfcError initiator_deselect_target(IntPtr device);
+
         //NFC_EXPORT int nfc_initiator_select_dep_target(nfc_device* pnd, const nfc_dep_mode ndm, const nfc_baud_rate nbr, const nfc_dep_info* pndiInitiator, nfc_target *pnt, const int timeout);
         //NFC_EXPORT int nfc_initiator_poll_dep_target(nfc_device* pnd, const nfc_dep_mode ndm, const nfc_baud_rate nbr, const nfc_dep_info* pndiInitiator, nfc_target *pnt, const int timeout);
-        //NFC_EXPORT int nfc_initiator_deselect_target(nfc_device* pnd);
         //NFC_EXPORT int nfc_initiator_transceive_bytes(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTx, uint8_t *pbtRx, const size_t szRx, int timeout);
         //NFC_EXPORT int nfc_initiator_transceive_bits(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTxBits, const uint8_t* pbtTxPar, uint8_t *pbtRx, const size_t szRx, uint8_t *pbtRxPar);
         //NFC_EXPORT int nfc_initiator_transceive_bytes_timed(nfc_device* pnd, const uint8_t* pbtTx, const size_t szTx, uint8_t *pbtRx, const size_t szRx, uint32_t *cycles);

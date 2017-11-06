@@ -6,59 +6,24 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC
 {
-    public sealed class NfcDevice : IDisposable, INfcInitiator, INfcEmulatedTag
+    public sealed class NfcDevice : NativeObject, INfcInitiator, INfcEmulatedTag
     {
-        private readonly IntPtr m_ptr;
-
-        internal IntPtr Handle => this.m_ptr;
-
-        internal NfcDevice(IntPtr ptr)
+        internal NfcDevice(IntPtr ptr) : base(ptr, true)
         {
-            this.m_ptr = ptr;
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // Pour détecter les appels redondants
-
-        void Dispose(bool disposing)
+        protected override void FreeHandle()
         {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: supprimer l'état managé (objets managés).
-                }
-
-                NativeMethods.close(this.m_ptr);
-                // TODO: libérer les ressources non managées (objets non managés) et remplacer un finaliseur ci-dessous.
-                // TODO: définir les champs de grande taille avec la valeur Null.
-
-                disposedValue = true;
-            }
+            NativeMethods.close(this.handle);
         }
-
-        ~NfcDevice()
-        {
-            // Ne modifiez pas ce code. Placez le code de nettoyage dans Dispose(bool disposing) ci-dessus.
-            Dispose(false);
-        }
-
-        // Ce code est ajouté pour implémenter correctement le modèle supprimable.
-        public void Dispose()
-        {
-            // Ne modifiez pas ce code. Placez le code de nettoyage dans Dispose(bool disposing) ci-dessus.
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
 
         public INfcInitiator InitInitiator(bool secure)
         {
             NfcError ret;
             if (secure)
-                ret = NativeMethods.initiator_init_secure_element(this.m_ptr);
+                ret = NativeMethods.initiator_init_secure_element(this.handle);
             else
-                ret = NativeMethods.initiator_init(this.m_ptr);
+                ret = NativeMethods.initiator_init(this.handle);
 
             NfcException.Raise(ret);
             return this;
@@ -84,7 +49,7 @@ namespace RaspberryPi.LibNFC
             {
                 if (this._name == null)
                 {
-                    IntPtr ptr = NativeMethods.device_get_name(this.m_ptr);
+                    IntPtr ptr = NativeMethods.device_get_name(this.handle);
                     this._name = Marshal.PtrToStringAnsi(ptr);
                 }
                 return this._name;
@@ -97,7 +62,7 @@ namespace RaspberryPi.LibNFC
             {
                 if (this._connstring == null)
                 {
-                    IntPtr ptr = NativeMethods.device_get_connstring(this.m_ptr);
+                    IntPtr ptr = NativeMethods.device_get_connstring(this.handle);
                     this._connstring = Marshal.PtrToStringAnsi(ptr);
                 }
                 return this._connstring;
@@ -108,7 +73,7 @@ namespace RaspberryPi.LibNFC
         {
             int length = 4096;
             string buff = new string((char)0, length);
-            NfcError code = NativeMethods.device_get_information_about(this.m_ptr, ref buff);
+            NfcError code = NativeMethods.device_get_information_about(this.handle, ref buff);
             if (code != NfcError.Success)
             {
                 throw new NfcException("Can't get device info", code);
@@ -118,17 +83,17 @@ namespace RaspberryPi.LibNFC
 
         public void SetProperty(NfcProperty property, int value)
         {
-            NfcError err = NativeMethods.device_set_property_int(this.m_ptr, property, value);
+            NfcError err = NativeMethods.device_set_property_int(this.handle, property, value);
             NfcException.Raise(err);
         }
 
         public void SetProperty(NfcProperty property, bool value)
         {
-            NfcError err = NativeMethods.device_set_property_bool(this.m_ptr, property, value);
+            NfcError err = NativeMethods.device_set_property_bool(this.handle, property, value);
             NfcException.Raise(err);
         }
 
-        public NfcError LastError { get { return NativeMethods.device_get_last_error(this.m_ptr); } }
+        public NfcError LastError { get { return NativeMethods.device_get_last_error(this.handle); } }
 
         //NfcTarget INfcInitiator.Poll(NfcModulation[] modulations, byte pollNr, byte period)
         //{
@@ -162,10 +127,10 @@ namespace RaspberryPi.LibNFC
             GCHandle gc = GCHandle.Alloc(modulations, GCHandleType.Pinned);
             try
             {
-                int size = Marshal.SizeOf<Interop.NfcTarget>();
+                int size = Marshal.SizeOf<Interop.nfc_target>();
                 nfcTarget = Marshal.AllocHGlobal(size);
                 Console.WriteLine("Allocated nfcTarget memory. size={0} ptr={1}", size, nfcTarget);
-                count = NativeMethods.initiator_poll_target(this.m_ptr, modulations, (uint)modulations.Length, pollNr, period, nfcTarget);
+                count = NativeMethods.initiator_poll_target(this.handle, modulations, (uint)modulations.Length, pollNr, period, nfcTarget);
                 Console.WriteLine($"episage nfc returned {count}");
             }
             finally
@@ -183,6 +148,43 @@ namespace RaspberryPi.LibNFC
                 return null;
             NfcTarget target = new NfcTarget(this, nfcTarget);
             return target;
+        }
+
+        private static readonly int MAX_CANDIDATES = 16;
+        NfcTargetList INfcInitiator.ListPassiveTargets(NfcModulation modulation)
+        {
+            int size = Marshal.SizeOf<nfc_target>() * MAX_CANDIDATES;
+            IntPtr ptrData = Marshal.AllocHGlobal(size);
+            int count = NativeMethods.initiator_list_passive_targets(this.handle, modulation, ptrData, MAX_CANDIDATES);
+            if (count < 0)
+            {
+                Marshal.FreeHGlobal(ptrData);
+                NfcException.Raise((NfcError)count);
+                return null;
+            }
+            if (count == 0)
+            {
+                Marshal.FreeHGlobal(ptrData);
+                return new NfcTargetList(IntPtr.Zero, 0, this);
+            }
+            return new NfcTargetList(ptrData, count, this);
+        }
+
+        NfcSelectedTarget INfcInitiator.Select(NfcModulation modulation)
+        {
+            IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<nfc_target>());
+            int code = NativeMethods.initiator_select_passive_target(this.handle, modulation, IntPtr.Zero, 0, ptr);
+            if (code < 0)
+            {
+                Marshal.FreeHGlobal(ptr);
+                NfcException.Raise((NfcError)code);
+            }
+            if (code == 0)
+            {
+                Marshal.FreeHGlobal(ptr);
+                return null;
+            }
+            return new NfcSelectedTarget(ptr, this);
         }
     }
 }

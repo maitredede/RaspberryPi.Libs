@@ -6,39 +6,43 @@ namespace RaspberryPi.LibNFC
 {
     public enum NfcProperty
     {
-        /**
-           * Default command processing timeout
-           * Property value's (duration) unit is ms and 0 means no timeout (infinite).
-           * Default value is set by driver layer
-           */
+        /// <summary>
+        /// Default command processing timeout
+        /// Property value's (duration) unit is ms and 0 means no timeout (infinite).
+        /// Default value is set by driver layer
+        /// </summary>
         NP_TIMEOUT_COMMAND,
-        /**
-         * Timeout between ATR_REQ and ATR_RES
-         * When the device is in initiator mode, a target is considered as mute if no
-         * valid ATR_RES is received within this timeout value.
-         * Default value for this property is 103 ms on PN53x based devices.
-         */
+        /// <summary>
+        /// Timeout between ATR_REQ and ATR_RES
+        /// When the device is in initiator mode, a target is considered as mute if no
+        /// valid ATR_RES is received within this timeout value.
+        /// Default value for this property is 103 ms on PN53x based devices.
+        /// </summary>
         NP_TIMEOUT_ATR,
-        /**
-         * Timeout value to give up reception from the target in case of no answer.
-         * Default value for this property is 52 ms).
-         */
+        /// <summary>
+        /// Timeout value to give up reception from the target in case of no answer.
+        /// Default value for this property is 52 ms).
+        /// </summary>
         NP_TIMEOUT_COM,
-        /** Let the PN53X chip handle the CRC bytes. This means that the chip appends
-        * the CRC bytes to the frames that are transmitted. It will parse the last
-        * bytes from received frames as incoming CRC bytes. They will be verified
-        * against the used modulation and protocol. If an frame is expected with
-        * incorrect CRC bytes this option should be disabled. Example frames where
-        * this is useful are the ATQA and UID+BCC that are transmitted without CRC
-        * bytes during the anti-collision phase of the ISO14443-A protocol. */
+        /// <summary>
+        /// Let the PN53X chip handle the CRC bytes. This means that the chip appends
+        /// the CRC bytes to the frames that are transmitted. It will parse the last
+        /// bytes from received frames as incoming CRC bytes. They will be verified
+        /// against the used modulation and protocol. If an frame is expected with
+        /// incorrect CRC bytes this option should be disabled. Example frames where
+        /// this is useful are the ATQA and UID+BCC that are transmitted without CRC
+        /// bytes during the anti-collision phase of the ISO14443-A protocol. */
+        /// </summary>
         NP_HANDLE_CRC,
-        /** Parity bits in the network layer of ISO14443-A are by default generated and
-         * validated in the PN53X chip. This is a very convenient feature. On certain
-         * times though it is useful to get full control of the transmitted data. The
-         * proprietary MIFARE Classic protocol uses for example custom (encrypted)
-         * parity bits. For interoperability it is required to be completely
-         * compatible, including the arbitrary parity bits. When this option is
-         * disabled, the functions to communicating bits should be used. */
+        /// <summary>
+        /// Parity bits in the network layer of ISO14443-A are by default generated and
+        /// validated in the PN53X chip. This is a very convenient feature. On certain
+        /// times though it is useful to get full control of the transmitted data. The
+        /// proprietary MIFARE Classic protocol uses for example custom (encrypted)
+        /// parity bits. For interoperability it is required to be completely
+        /// compatible, including the arbitrary parity bits. When this option is
+        /// disabled, the functions to communicating bits should be used. */
+        /// </summary>
         NP_HANDLE_PARITY,
         /** This option can be used to enable or disable the electronic field of the
          * NFC device. */

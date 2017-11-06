@@ -4,6 +4,7 @@ using System.Text;
 
 namespace RaspberryPi.PiGPIO
 {
+    [CLSCompliant(false)]
     public struct gpioPulse_t
     {
         public uint gpioOn;

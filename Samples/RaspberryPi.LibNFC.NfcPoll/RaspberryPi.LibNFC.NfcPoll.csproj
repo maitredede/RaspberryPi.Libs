@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RaspberryPi.LibFreefare\RaspberryPi.LibFreefare.csproj" />
     <ProjectReference Include="..\..\RaspberryPi.LibNFC\RaspberryPi.LibNFC.csproj" />
   </ItemGroup>
 

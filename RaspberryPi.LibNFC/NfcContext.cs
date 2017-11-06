@@ -7,54 +7,28 @@ namespace RaspberryPi.LibNFC
     /// <summary>
     /// NFC context
     /// </summary>
-    public sealed class NfcContext : IDisposable, INfcContext
+    public sealed class NfcContext : NativeObject, INfcContext
     {
-        private readonly IntPtr m_ctx;
-
         /// <summary>
         /// Create a new NFC context
         /// </summary>
-        public NfcContext()
+        public NfcContext() : base(Init(), true)
         {
-            NativeMethods.init(out this.m_ctx);
-            if (this.m_ctx == IntPtr.Zero)
+        }
+
+        private static IntPtr Init()
+        {
+            NativeMethods.init(out IntPtr ctx);
+            if (ctx == IntPtr.Zero)
                 throw new OutOfMemoryException("Can't initialize libnfc");
+            return ctx;
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // Pour détecter les appels redondants
-
-        void Dispose(bool disposing)
+        protected override void FreeHandle()
         {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: supprimer l'état managé (objets managés).
-                }
-
-                // TODO: libérer les ressources non managées (objets non managés) et remplacer un finaliseur ci-dessous.
-                // TODO: définir les champs de grande taille avec la valeur Null.
-                NativeMethods.exit(this.m_ctx);
-
-                disposedValue = true;
-            }
+            NativeMethods.exit(this.handle);
         }
 
-        ~NfcContext()
-        {
-            // Ne modifiez pas ce code. Placez le code de nettoyage dans Dispose(bool disposing) ci-dessus.
-            Dispose(false);
-        }
-
-        // Ce code est ajouté pour implémenter correctement le modèle supprimable.
-        public void Dispose()
-        {
-            // Ne modifiez pas ce code. Placez le code de nettoyage dans Dispose(bool disposing) ci-dessus.
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
         private static string _version;
 
         /// <summary>
@@ -80,7 +54,7 @@ namespace RaspberryPi.LibNFC
         /// <returns></returns>
         public NfcDevice Open(string connectionString)
         {
-            IntPtr ptr = NativeMethods.open(this.m_ctx, connectionString);
+            IntPtr ptr = NativeMethods.open(this.handle, connectionString);
             if (ptr == IntPtr.Zero)
                 return null;
             return new NfcDevice(ptr);
@@ -103,7 +77,7 @@ namespace RaspberryPi.LibNFC
                     Marshal.WriteByte(ptr, i, 0);
                 }
 
-                int size = NativeMethods.list_devices(this.m_ctx, ptr, MAX_DEVICE);
+                int size = NativeMethods.list_devices(this.handle, ptr, MAX_DEVICE);
                 string[] arr = new string[size];
                 for (int i = 0; i < size; i++)
                 {

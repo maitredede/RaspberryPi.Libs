@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using RaspberryPi.LibNFC.Mifare;
 
 namespace RaspberryPi.LibNFC.NfcPoll
 {
@@ -60,41 +62,56 @@ namespace RaspberryPi.LibNFC.NfcPoll
 
                     while (true)
                     {
-                        using (var tags = device.FreefareGetTags())
-                        {
-                            if (tags == null)
-                            {
-                                Console.WriteLine("Tags is null");
-                                return;
-                            }
-                            Console.WriteLine("Found tags : {0}", tags.Count);
-                            foreach (var tag in tags)
-                            {
-                                Console.WriteLine("  {0}: type={1} name={2}", tag.GetType().Name, tag.Type, tag.Name);
-                            }
-                        }
+                        PollTagsAndDisplayInfo(initiator);
                     }
-
-                    //Console.WriteLine($"NFC device will poll during {pollNr * modulations.Length * period * 150}ms ({pollNr} pollings of {period * 150}ms for {modulations.Length} modulations)");
-                    //NfcTarget target = null;
-                    //do
-                    //{
-                    //    target = initiator.Poll(modulations, pollNr, period);
-                    //}
-                    //while (target == null);
-                    //NfcInitiatorTarget target = await initiator.PollAsync(modulations, period, cts.Token);
-                    //Console.WriteLine("Found receiver device");
-
-                    ////TODO card handling read/write/info
-
-                    //while (target.IsPresent())
-                    //{
-                    //    Thread.Sleep(10);
-                    //}
-
-                    //Console.WriteLine("Receiver device removed");
                 }
             }
+        }
+
+        private static void PollTagsAndDisplayInfo(INfcInitiator initiator)
+        {
+            NfcModulation mod = new NfcModulation(NfcModulationType.ISO14443A, NfcBaudRate.BR106);
+            using (var tags = initiator.ListPassiveTargets(mod))
+            {
+                Console.WriteLine("Found tags: {0} for modulation {1}", tags.Count, mod);
+                Console.WriteLine("Last error: {0}", ((NfcDevice)initiator).LastError);
+                if (tags.Count == 0)
+                    return;
+
+                foreach (var target in tags)
+                {
+                    DisplayInfo(target);
+                }
+            }
+            ////There are tags, select one
+            //Console.WriteLine("Selecting Mifare tag");
+            //var tag = initiator.SelectMifareTag();
+            //if (tag == null)
+            //{
+            //    Console.WriteLine("No corresponding tags selected");
+            //    return;
+            //}
+            //using (tag)
+            //{
+            //    Console.WriteLine("Tag on board");
+
+
+            //    while (tag.IsPresent())
+            //    {
+            //        Thread.Sleep(300);
+            //        Console.Write(".");
+            //    }
+            //    Console.WriteLine();
+            //    Console.WriteLine("Tag removed");
+            //}
+        }
+
+        private static void DisplayInfo(NfcTarget target)
+        {
+            Console.WriteLine("Target info : {0}", target);
+            Console.WriteLine("TasteMifareMini: {0}", target.TasteMifareMini());
+            Console.WriteLine("TasteMifareClassic1k: {0}", target.TasteMifareClassic1k());
+            Console.WriteLine("TasteMifareClassic4k: {0}", target.TasteMifareClassic4k());
         }
     }
 }

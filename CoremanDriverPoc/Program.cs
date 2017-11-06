@@ -79,6 +79,7 @@ namespace CoremanDriverPoc
         }
 
         private static IPiGPIO g;
+        private static bool run = true;
         private static int Run(IPiGPIO gpio)
         {
             Console.WriteLine("Starting application...");
@@ -91,7 +92,6 @@ namespace CoremanDriverPoc
                 drv.Init();
 
                 Console.WriteLine("Looping...");
-                bool run = true;
                 Console.CancelKeyPress += (s, e) =>
                 {
                     if (run)
@@ -398,15 +398,15 @@ namespace CoremanDriverPoc
         private static void SetC1(RGB rgb)
         {
             g.Write(drv.Layout.R1, rgb.R);
-            g.Write(drv.Layout.G1, rgb.G);
-            g.Write(drv.Layout.B1, rgb.B);
+            g.Write(drv.Layout.G1, rgb.B);
+            g.Write(drv.Layout.B1, rgb.G);
         }
 
         private static void SetC2(RGB rgb)
         {
             g.Write(drv.Layout.R2, rgb.R);
-            g.Write(drv.Layout.G2, rgb.G);
-            g.Write(drv.Layout.B2, rgb.B);
+            g.Write(drv.Layout.G2, rgb.B);
+            g.Write(drv.Layout.B2, rgb.G);
         }
 
         private static void ChessBoardScan()
@@ -443,36 +443,39 @@ namespace CoremanDriverPoc
             }
             Console.WriteLine();
 
-            while (true)
+            while (run)
             {
                 Console.Write(".");
-                for (int scan = 0; scan < 32; scan++)
+                const int SCAN_COUNT = 32;
+                const int SCAN_ROW_DIFF = -1;
+                for (int scan = 0; scan < SCAN_COUNT; scan++)
                 {
+                    int row = (scan + SCAN_ROW_DIFF + SCAN_COUNT) % SCAN_COUNT;
                     g.Write(drv.Layout.OE, true);
-                    for (int row = 0; row < 32; row++)
+                    for (int col = 0; col < 64; col++)
                     {
-                        if (row == scan)
+                        SetC1(board[row][col]);
+                        SetC2(board[row + 32][col]);
+                        Clock();
+                    }
+                    if (scan == 0)
+                    {
+                        g.Write(drv.Layout.A, true);
+                        g.Write(drv.Layout.A, false);
+                        g.Write(drv.Layout.B, true);
+                    }
+                    else
+                    {
+                        g.Write(drv.Layout.A, true);
+                        g.Write(drv.Layout.A, false);
+                        if (scan == SCAN_COUNT - 1)
                         {
-                            for (int col = 0; col < 64; col++)
-                            {
-                                SetC1(board[row][col]);
-                                SetC2(board[row + 32][col]);
-                                Clock();
-                            }
-                            g.Write(drv.Layout.A, true);
-                            g.Write(drv.Layout.A, false);
-                        }
-                        else
-                        {
-                            g.Write(drv.Layout.B, true);
-                            g.Write(drv.Layout.A, true);
-                            g.Write(drv.Layout.A, false);
                             g.Write(drv.Layout.B, false);
                         }
                     }
                     Strobe();
                     g.Write(drv.Layout.OE, false);
-                    Thread.Sleep(0);
+                    Thread.Sleep(1);
                 }
             }
         }

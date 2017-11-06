@@ -18,5 +18,10 @@ namespace RaspberryPi.LibNFC
             this.ModulationType = type;
             this.BaudRate = rate;
         }
+
+        public override string ToString()
+        {
+            return string.Format("Modulation: {0} at {1}", this.ModulationType, this.BaudRate);
+        }
     }
 }

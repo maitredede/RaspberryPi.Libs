@@ -635,6 +635,7 @@ namespace RaspberryPi.PiGPIO
             //return res;
         }
 
+        [CLSCompliant(false)]
         public int WVTX(uint wid)
         {
             Commands cmd = Commands.WVTX;
