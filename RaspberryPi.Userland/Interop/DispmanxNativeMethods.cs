@@ -7,18 +7,6 @@ namespace RaspberryPi.Userland.Interop
 {
     internal static class DispmanxNativeMethods
     {
-        //[DllImport(BcmHost.LIB, EntryPoint = "vc_dispmanx_display_open", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern IntPtr DisplayOpen(uint device);
-
-        //[DllImport(BcmHost.LIB, EntryPoint = "vc_dispmanx_update_start", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern IntPtr UpdateStart(int priority);
-
-        //[DllImport(BcmHost.LIB, EntryPoint = "vc_dispmanx_update_submit_sync", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int UpdateSubmitSync(IntPtr update);
-
-        //[DllImport(BcmHost.LIB, EntryPoint = "vc_dispmanx_element_add", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern IntPtr ElementAdd(IntPtr update, IntPtr display, int layer, out VC_RECT_T dest_rect, IntPtr src, out VC_RECT_T src_rect, uint protection, IntPtr alpha, IntPtr clamp, int transform);
-
         public static readonly int VERSION = 1;
 
         //[DllImport(BcmHost.LIB, EntryPoint = "vc_dispman_init", CallingConvention = CallingConvention.Cdecl)]
@@ -35,6 +23,9 @@ namespace RaspberryPi.Userland.Interop
 
         [DllImport(BcmHostNativeMethods.LIB, EntryPoint = "vc_dispmanx_display_open", CallingConvention = CallingConvention.Cdecl)]
         public static extern DISPMANX_DISPLAY_HANDLE_T DisplayOpen(DISPMAN_ID device);
+
+        [DllImport(BcmHostNativeMethods.LIB, EntryPoint = "vc_dispmanx_display_open_offscreen", CallingConvention = CallingConvention.Cdecl)]
+        public static extern DISPMANX_DISPLAY_HANDLE_T DisplayOpenOffscreen(DISPMANX_RESOURCE_HANDLE_T handle, DISPMANX_TRANSFORM_T orientation);
 
         [DllImport(BcmHostNativeMethods.LIB, EntryPoint = "vc_dispmanx_display_close", CallingConvention = CallingConvention.Cdecl)]
         public static extern DISPMANX_STATUS_T DisplayClose(DISPMANX_DISPLAY_HANDLE_T display);

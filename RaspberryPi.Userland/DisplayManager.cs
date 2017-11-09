@@ -28,6 +28,20 @@ namespace RaspberryPi.Userland
         }
 
         /// <summary>
+        /// Opens an offscreen display
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="orientation"></param>
+        /// <returns></returns>
+        public Display DisplayOpenOffscreen(Resource dest, DISPMANX_TRANSFORM_T orientation)
+        {
+            DISPMANX_DISPLAY_HANDLE_T handle = NativeMethods.DisplayOpenOffscreen(dest.Handle, orientation);
+            if (handle.Handle == IntPtr.Zero)
+                return null;
+            return new Display(handle);
+        }
+
+        /// <summary>
         /// Create a new resource
         /// </summary>
         /// <param name="type"></param>
@@ -63,8 +77,6 @@ namespace RaspberryPi.Userland
                 throw new ArgumentNullException(nameof(update));
             if (display == null)
                 throw new ArgumentNullException(nameof(display));
-            if (resource == null)
-                throw new ArgumentNullException(nameof(resource));
             if (protection == null)
                 throw new ArgumentNullException(nameof(protection));
 
@@ -73,8 +85,9 @@ namespace RaspberryPi.Userland
 
             VC_DISPMANX_ALPHA_T nativeAlpha = alpha?.Native;
             DISPMANX_CLAMP_T nativeClamp = clamp?.Native;
+            DISPMANX_RESOURCE_HANDLE_T resHandle = resource?.Handle ?? DISPMANX_RESOURCE_HANDLE_T.Null;
 
-            DISPMANX_ELEMENT_HANDLE_T handle = NativeMethods.ElementAdd(update.Handle, display.Handle, layer, ref d, resource.Handle, ref s, protection.Handle, ref nativeAlpha, ref nativeClamp, transform);
+            DISPMANX_ELEMENT_HANDLE_T handle = NativeMethods.ElementAdd(update.Handle, display.Handle, layer, ref d, resHandle, ref s, protection.Handle, ref nativeAlpha, ref nativeClamp, transform);
             if (handle.Handle == IntPtr.Zero)
                 return null;
             return new Element(handle);

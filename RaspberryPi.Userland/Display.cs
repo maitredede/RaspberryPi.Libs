@@ -11,6 +11,7 @@ namespace RaspberryPi.Userland
         private readonly DISPMANX_DISPLAY_HANDLE_T m_handle;
 
         internal DISPMANX_DISPLAY_HANDLE_T Handle { get { return this.m_handle; } }
+        public IntPtr Ptr => this.m_handle.Handle;
 
         internal Display(DISPMANX_DISPLAY_HANDLE_T handle)
         {

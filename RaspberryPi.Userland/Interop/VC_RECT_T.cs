@@ -26,7 +26,7 @@ namespace RaspberryPi.Userland.Interop
 
         public static implicit operator VC_RECT_T(Rectangle rect)
         {
-            return new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+            return new VC_RECT_T(rect.X, rect.Y, rect.Width, rect.Height);
         }
     }
 }

@@ -50,6 +50,8 @@ namespace RaspberryPi.CameraToLedPanel
             const int camNumber = 0;
 
             IBcmHost host = svc.GetRequiredService<IBcmHost>();
+            LedMatrix matrix = svc.GetRequiredService<LedMatrix>();
+
             CameraInfo camInfo;
             using (var camInfoComp = host.MMAL.ComponentCreateCameraInfo())
             {
@@ -63,6 +65,15 @@ namespace RaspberryPi.CameraToLedPanel
                 create_camera_component(camera, camNumber);
 
                 //camera.Enable();
+
+                while (true)
+                {
+                    //TODO : capture image
+                    matrix.UpdateCanvas(canvas =>
+                    {
+                        //TODO : put image to canvas
+                    });
+                }
             }
 
             app.Error.WriteLine("Camera capture not implemented");

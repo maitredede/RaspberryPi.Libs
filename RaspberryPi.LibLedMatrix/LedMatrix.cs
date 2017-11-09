@@ -1,6 +1,7 @@
 ﻿using RaspberryPi.LibLedMatrix.Interop;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace RaspberryPi.LibLedMatrix
@@ -39,12 +40,19 @@ namespace RaspberryPi.LibLedMatrix
 
         private static IntPtr CreateLedMatrix(LedMatrixOptions options)
         {
-            IntPtr argc = IntPtr.Zero;
-            IntPtr argv = IntPtr.Zero;
-            IntPtr ptr = NativeMethods.led_matrix_create_from_options(ref options, argc, out argv);
-            if (ptr == IntPtr.Zero)
-                throw new OutOfMemoryException("Can't create led matrix");
-            return ptr;
+            GCHandle h = GCHandle.Alloc(options, GCHandleType.Pinned);
+            try
+            {
+                IntPtr argv;
+                IntPtr ptr = NativeMethods.led_matrix_create_from_options(h.AddrOfPinnedObject(), IntPtr.Zero, out argv);
+                if (ptr == IntPtr.Zero)
+                    throw new OutOfMemoryException("Can't create led matrix");
+                return ptr;
+            }
+            finally
+            {
+                h.Free();
+            }
         }
 
         protected override void FreeHandle()

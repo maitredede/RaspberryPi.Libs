@@ -13,8 +13,7 @@ namespace RaspberryPi.LibLedMatrix.Interop
         internal static extern IntPtr led_matrix_create(int rows, int chained, int parallel);
 
         [DllImport(LIB, EntryPoint = "led_matrix_create_from_options", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr led_matrix_create_from_options(ref LedMatrixOptions options, IntPtr argc, out IntPtr argv);
-        //internal static extern IntPtr led_matrix_create_from_options(ref LedMatrixOptions options, ref int argc, ref IntPtr argv);
+        internal static extern IntPtr led_matrix_create_from_options(IntPtr options, IntPtr argc, out IntPtr argv);
 
         [DllImport(LIB, EntryPoint = "led_matrix_delete", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void led_matrix_delete(IntPtr matrix);

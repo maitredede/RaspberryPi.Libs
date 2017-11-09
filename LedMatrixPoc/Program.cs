@@ -28,7 +28,7 @@ namespace LedMatrixPoc
 
         private static int RunApp()
         {
-            Console.WriteLine("Hello World!");
+            app.Out.WriteLine("Hello World!");
 
             if (String.IsNullOrEmpty(image.Value))
             {
