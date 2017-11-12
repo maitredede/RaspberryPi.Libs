@@ -18,6 +18,9 @@ namespace RaspberryPi.LibLedMatrix.Interop
         [DllImport(LIB, EntryPoint = "led_matrix_delete", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void led_matrix_delete(IntPtr matrix);
 
+        [DllImport(LIB, EntryPoint = "led_matrix_update_options", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern bool led_matrix_update_options(IntPtr matrix, IntPtr options);
+
         [DllImport(LIB, EntryPoint = "led_matrix_create_offscreen_canvas", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr led_matrix_create_offscreen_canvas(IntPtr matrix);
 

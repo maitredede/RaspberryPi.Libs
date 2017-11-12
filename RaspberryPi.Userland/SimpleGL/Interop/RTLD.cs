@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES.Interop
+namespace RaspberryPi.Userland.SimpleGL.Interop
 {
     [Flags]
     internal enum RTLD

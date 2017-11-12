@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     /// <summary>
 	/// Used in GL.Disable, GL.Enable and 1 other function

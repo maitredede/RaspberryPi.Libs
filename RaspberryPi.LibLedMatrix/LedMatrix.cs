@@ -86,5 +86,18 @@ namespace RaspberryPi.LibLedMatrix
                 this.m_updateLatch.Release();
             }
         }
+
+        public bool UpdateOptions(LedMatrixOptions options)
+        {
+            GCHandle h = GCHandle.Alloc(options, GCHandleType.Pinned);
+            try
+            {
+                return NativeMethods.led_matrix_update_options(this.handle, h.AddrOfPinnedObject());
+            }
+            finally
+            {
+                h.Free();
+            }
+        }
     }
 }

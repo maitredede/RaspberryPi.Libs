@@ -11,8 +11,6 @@ namespace OpenGlToMatrix
         private readonly Element m_e;
         private readonly BcmHost m_host;
 
-        public Element E => this.m_e;
-
         private ScopedElement(BcmHost host, Element e)
         {
             this.m_e = e;
@@ -32,6 +30,11 @@ namespace OpenGlToMatrix
             Element element = host.Dispman.ElementAdd(update, display, 0, destRect, resource, srcRect, Protection.None, null, null, DISPMANX_TRANSFORM_T.DISPMANX_NO_ROTATE);
             update.SubmitSync();
             return new ScopedElement(host, element);
+        }
+
+        public static implicit operator Element(ScopedElement se)
+        {
+            return se.m_e;
         }
     }
 }

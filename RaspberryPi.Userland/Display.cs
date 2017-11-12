@@ -1,12 +1,14 @@
 ﻿using RaspberryPi.Userland.Interop;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace RaspberryPi.Userland
 {
     public sealed class Display : IDisposable
     {
+        private readonly Lazy<Rectangle> m_RectangleLoader;
         private readonly Lazy<DISPMANX_MODEINFO_T> m_infosLoader;
         private readonly DISPMANX_DISPLAY_HANDLE_T m_handle;
 
@@ -18,6 +20,7 @@ namespace RaspberryPi.Userland
             this.m_handle = handle;
 
             this.m_infosLoader = new Lazy<DISPMANX_MODEINFO_T>(this.GetInfos);
+            this.m_RectangleLoader = new Lazy<Rectangle>(this.GetRectangle);
         }
 
         private DISPMANX_MODEINFO_T GetInfos()
@@ -28,9 +31,15 @@ namespace RaspberryPi.Userland
             return infos;
         }
 
+        private Rectangle GetRectangle()
+        {
+            return new Rectangle(0, 0, this.Width, this.Height);
+        }
+
         public int Width { get { return this.m_infosLoader.Value.width; } }
         public int Height { get { return this.m_infosLoader.Value.height; } }
         public Screen DisplayNum { get { return (Screen)this.m_infosLoader.Value.display_num; } }
+        public Rectangle Rectangle { get { return this.m_RectangleLoader.Value; } }
 
         public void Dispose()
         {

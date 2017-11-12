@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     /// <summary>
     /// Not used directly.

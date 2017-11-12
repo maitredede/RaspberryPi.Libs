@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     public static class GL
     {
@@ -49,8 +49,8 @@ namespace OpenGlToMatrix.SimpleGLES
 
         [DllImport(LIB_GLES, EntryPoint = "glGenTextures", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GenTextures(int n, IntPtr textures);
-        [DllImport(LIB_GLES, EntryPoint = "glGenTextures", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe void GenTextures(int n, uint* textures);
+        //[DllImport(LIB_GLES, EntryPoint = "glGenTextures", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern unsafe void GenTextures(int n, uint* textures);
 
         [DllImport(LIB_GLES, EntryPoint = "glBindTexture", CallingConvention = CallingConvention.Cdecl)]
         public static extern void BindTexture(TextureTarget target, uint texture);

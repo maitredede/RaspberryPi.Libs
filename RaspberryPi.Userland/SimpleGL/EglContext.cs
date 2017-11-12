@@ -1,9 +1,9 @@
-﻿using OpenGlToMatrix.SimpleGLES.Interop;
+﻿using RaspberryPi.Userland.SimpleGL.Interop;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     public sealed class EglContext : IDisposable
     {

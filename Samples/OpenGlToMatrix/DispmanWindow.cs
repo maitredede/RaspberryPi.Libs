@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using RaspberryPi.Userland;
-using OpenGlToMatrix.SimpleGLES;
 using System.Runtime.InteropServices;
+using RaspberryPi.Userland.SimpleGL;
 
 namespace OpenGlToMatrix
 {

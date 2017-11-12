@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Mono.Unix;
-using OpenGlToMatrix.SimpleGLES;
 using RaspberryPi.LibLedMatrix;
 using RaspberryPi.Userland;
+using RaspberryPi.Userland.SimpleGL;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -32,7 +32,7 @@ namespace OpenGlToMatrix
         {
             app.Out.WriteLine("Hello World!");
 
-            int brightnessValue = 0;
+            int brightnessValue = 100;
             if (brightness.HasValue())
             {
                 if (int.TryParse(brightness.Value(), out brightnessValue))
@@ -79,21 +79,22 @@ namespace OpenGlToMatrix
                 rows = 64,
                 led_rgb_sequence = "RBG",
                 pwm_bits = 8,
-                show_refresh_rate = 1
+                show_refresh_rate = 1,
+                brightness = brightnessValue,
             })
             using (LedMatrix matrix = new LedMatrix(options.rows, options.chain_length, options.parallel))
             using (BcmHost host = new BcmHost())
             using (Resource target = host.Dispman.CreateResource(VC_IMAGE_TYPE_T.VC_IMAGE_RGB888, matrix.CanvasWidth, matrix.CanvasHeight))
             using (Display display = host.Dispman.DisplayOpenOffscreen(target, DISPMANX_TRANSFORM_T.DISPMANX_NO_ROTATE))
             //using (Display display = host.Dispman.DisplayOpen(Screen.MAIN_LCD))
-            using (ScopedElement element = ScopedElement.Create(host, display, null, destRect: display.ToRectangle(), srcRect: Rescale(display.ToRectangle())))
-            using (DispmanWindow window = new DispmanWindow(element.E, display.Width, display.Height))
+            using (ScopedElement element = ScopedElement.Create(host, display, null, destRect: display.Rectangle, srcRect: Rescale(display.Rectangle)))
+            using (DispmanWindow window = new DispmanWindow(element, display.Width, display.Height))
             using (EglDisplay eglDisp = new EglDisplay())
             using (EglContext ctx = new EglContext(eglDisp))
             using (EglSurface surface = new EglSurface(eglDisp, window))
             using (Data data = new Data())
             {
-                Rectangle rect = display.ToRectangle();
+                Rectangle rect = display.Rectangle;
                 app.Out.WriteLine("Ready to go, screen is {0}x{1}", display.Width, display.Height);
                 Stopwatch swatch = Stopwatch.StartNew();
 
@@ -122,12 +123,45 @@ namespace OpenGlToMatrix
                         e.Cancel = true;
                     }
                 };
+                Console.TreatControlCAsInput = true;
 
                 int pitch = Utils.ALIGN_UP(3 * display.Width, 32);
                 byte[] image = new byte[pitch * display.Height];
                 app.Out.WriteLine("Buffer size: {0}", image.Length);
                 while (run)
                 {
+                    if (Console.KeyAvailable)
+                    {
+                        var key = Console.ReadKey(true);
+                        if (key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control)
+                        {
+                            run = false;
+                            Console.TreatControlCAsInput = false;
+                            continue;
+                        }
+                        if (key.Key == ConsoleKey.Add || key.Key == ConsoleKey.Subtract)
+                        {
+                            int newB;
+                            if (key.Key == ConsoleKey.Add)
+                            {
+                                newB = Math.Min(options.brightness + 1, 100);
+                            }
+                            else
+                            {
+                                newB = Math.Max(options.brightness - 1, 0);
+                            }
+                            if (options.brightness != newB)
+                            {
+                                options.brightness = newB;
+                                app.Out.WriteLine("New brightness: {0}%", newB);
+                                if (!matrix.UpdateOptions(options))
+                                {
+                                    app.Out.WriteLine("Update option failed");
+                                }
+                            }
+                        }
+                    }
+
                     update_model();
                     redraw_scene(surface);
 

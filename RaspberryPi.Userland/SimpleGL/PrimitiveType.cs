@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     /// <summary>
 	/// Used in GL.Arb.DrawArraysInstanced, GL.Arb.DrawElementsInstanced and 32 other functions

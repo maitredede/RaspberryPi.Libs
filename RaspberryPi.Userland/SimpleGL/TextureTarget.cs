@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenGlToMatrix.SimpleGLES
+namespace RaspberryPi.Userland.SimpleGL
 {
     /// <summary>
 	/// Used in GL.BindTexture, GL.CompressedTexImage2D and 20 other functions

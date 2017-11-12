@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OpenGlToMatrix.SimpleGLES;
 using RaspberryPi.Userland;
+using RaspberryPi.Userland.SimpleGL;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
