@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{238BF873-13DD-4E62-93CD-31A85EB65C0F}"
 	ProjectSection(SolutionItems) = preProject
@@ -54,7 +54,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibNFC.NfcPoll"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibFreefare", "RaspberryPi.LibFreefare\RaspberryPi.LibFreefare.csproj", "{1C245579-7C47-4E91-9C82-AFBAA45A9B40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.LibLedMatrix", "RaspberryPi.LibLedMatrix\RaspberryPi.LibLedMatrix.csproj", "{693EF2A6-EBFC-4CA2-95A5-2B8183F2E237}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibLedMatrix", "RaspberryPi.LibLedMatrix\RaspberryPi.LibLedMatrix.csproj", "{693EF2A6-EBFC-4CA2-95A5-2B8183F2E237}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenGlToMatrix", "Samples\OpenGlToMatrix\OpenGlToMatrix.csproj", "{403AF87E-73AE-46EB-86C6-9CA954E56F25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.LibLedMatrix.ImageSharp", "RaspberryPi.LibLedMatrix.ImageSharp\RaspberryPi.LibLedMatrix.ImageSharp.csproj", "{8A275C29-AB3B-4070-B38E-160986536DF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -328,6 +332,30 @@ Global
 		{693EF2A6-EBFC-4CA2-95A5-2B8183F2E237}.Release|x64.Build.0 = Release|Any CPU
 		{693EF2A6-EBFC-4CA2-95A5-2B8183F2E237}.Release|x86.ActiveCfg = Release|Any CPU
 		{693EF2A6-EBFC-4CA2-95A5-2B8183F2E237}.Release|x86.Build.0 = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|x64.Build.0 = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Debug|x86.Build.0 = Debug|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|x64.ActiveCfg = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|x64.Build.0 = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|x86.ActiveCfg = Release|Any CPU
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25}.Release|x86.Build.0 = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|x64.Build.0 = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|x64.ActiveCfg = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|x64.Build.0 = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A275C29-AB3B-4070-B38E-160986536DF4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -338,6 +366,7 @@ Global
 		{08E1A22A-830F-4FE7-ACEA-75FF2176DE25} = {BD22F841-D4D3-47E8-9E9C-F5FE86372C2B}
 		{5C89BFD9-D73B-4F88-A2B6-DC52BDF958E4} = {BD22F841-D4D3-47E8-9E9C-F5FE86372C2B}
 		{A3929C97-533D-4105-A85D-AA8AFE22E0D0} = {BD22F841-D4D3-47E8-9E9C-F5FE86372C2B}
+		{403AF87E-73AE-46EB-86C6-9CA954E56F25} = {BD22F841-D4D3-47E8-9E9C-F5FE86372C2B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0750EB6C-8318-41A4-A8E8-333258F26FF4}

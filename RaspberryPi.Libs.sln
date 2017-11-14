@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{238BF873-13DD-4E62-93CD-31A85EB65C0F}"
 	ProjectSection(SolutionItems) = preProject
@@ -68,11 +68,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.CameraToLedPane
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaspberryPi.RaspiStill", "Samples\RaspberryPi.RaspiStill\RaspberryPi.RaspiStill.csproj", "{3FF873DB-A3A6-48BD-95A3-CE2747155144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLedMatrixImageViewer", "Samples\WebLedMatrixImageViewer\WebLedMatrixImageViewer.csproj", "{9155B0A4-1D77-4A1C-9236-3C1F424D7154}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLedMatrixImageViewer", "Samples\WebLedMatrixImageViewer\WebLedMatrixImageViewer.csproj", "{9155B0A4-1D77-4A1C-9236-3C1F424D7154}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenGlToMatrix", "Samples\OpenGlToMatrix\OpenGlToMatrix.csproj", "{70ED0301-9E63-4C2F-AB54-47BE8DB24C28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenGlToMatrix", "Samples\OpenGlToMatrix\OpenGlToMatrix.csproj", "{70ED0301-9E63-4C2F-AB54-47BE8DB24C28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EglLoad", "EglLoad\EglLoad.csproj", "{A6DA79E0-1725-4CCA-8960-94FAEA939011}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EglLoad", "EglLoad\EglLoad.csproj", "{A6DA79E0-1725-4CCA-8960-94FAEA939011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.EscPos", "RaspberryPi.EscPos\RaspberryPi.EscPos.csproj", "{36730D4B-5A8B-41FB-A668-6D6495C3DE5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.EscPos.ImageSharp", "RaspberryPi.EscPos.ImageSharp\RaspberryPi.EscPos.ImageSharp.csproj", "{507C46FF-4BC3-45AB-861F-3ED873E0AA05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.EscPos.Usb", "RaspberryPi.EscPos.Usb\RaspberryPi.EscPos.Usb.csproj", "{A9B6B53B-9C3E-41ED-9C4F-30D47CCBC741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscPosTest", "Samples\EscPosTest\EscPosTest.csproj", "{82836E93-B044-4BA9-BB20-63DAE16D7A61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,6 +192,22 @@ Global
 		{A6DA79E0-1725-4CCA-8960-94FAEA939011}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6DA79E0-1725-4CCA-8960-94FAEA939011}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6DA79E0-1725-4CCA-8960-94FAEA939011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36730D4B-5A8B-41FB-A668-6D6495C3DE5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36730D4B-5A8B-41FB-A668-6D6495C3DE5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36730D4B-5A8B-41FB-A668-6D6495C3DE5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36730D4B-5A8B-41FB-A668-6D6495C3DE5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{507C46FF-4BC3-45AB-861F-3ED873E0AA05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507C46FF-4BC3-45AB-861F-3ED873E0AA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507C46FF-4BC3-45AB-861F-3ED873E0AA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507C46FF-4BC3-45AB-861F-3ED873E0AA05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9B6B53B-9C3E-41ED-9C4F-30D47CCBC741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9B6B53B-9C3E-41ED-9C4F-30D47CCBC741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9B6B53B-9C3E-41ED-9C4F-30D47CCBC741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9B6B53B-9C3E-41ED-9C4F-30D47CCBC741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -207,6 +231,7 @@ Global
 		{9155B0A4-1D77-4A1C-9236-3C1F424D7154} = {09795F9A-92A2-4D03-AA45-1A5B06999AAC}
 		{70ED0301-9E63-4C2F-AB54-47BE8DB24C28} = {C891A45F-1BEF-4BA5-9D7B-5344C38F2A0F}
 		{A6DA79E0-1725-4CCA-8960-94FAEA939011} = {C891A45F-1BEF-4BA5-9D7B-5344C38F2A0F}
+		{82836E93-B044-4BA9-BB20-63DAE16D7A61} = {C891A45F-1BEF-4BA5-9D7B-5344C38F2A0F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0750EB6C-8318-41A4-A8E8-333258F26FF4}
