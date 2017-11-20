@@ -14,26 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="LibUsbDotNet\DeviceNotify\**" />
-    <Compile Remove="LibUsbDotNet\WinUsb\**" />
-    <EmbeddedResource Remove="LibUsbDotNet\DeviceNotify\**" />
-    <EmbeddedResource Remove="LibUsbDotNet\WinUsb\**" />
-    <None Remove="LibUsbDotNet\DeviceNotify\**" />
-    <None Remove="LibUsbDotNet\WinUsb\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="LibUsbDotNet\Internal\SetupApi.cs" />
-    <Compile Remove="LibUsbDotNet\Main\UsbStream.cs" />
+    <PackageReference Include="LibUsbDotNet" Version="2.2.10-r110" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RaspberryPi.EscPos\RaspberryPi.EscPos.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="LibUsb.Common\" />
-    <Folder Include="LibUsbDotNet\" />
   </ItemGroup>
 
 </Project>

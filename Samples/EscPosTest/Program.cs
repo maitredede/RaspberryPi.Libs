@@ -1,6 +1,7 @@
 ﻿using System;
 using RaspberryPi.EscPos;
 using RaspberryPi.EscPos.PrintConnectors;
+using LibUsbDotNet;
 
 namespace EscPosTest
 {
