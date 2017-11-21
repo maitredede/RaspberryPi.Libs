@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\RaspberryPi.EscPos.ImageSharp\RaspberryPi.EscPos.ImageSharp.csproj" />
     <ProjectReference Include="..\..\RaspberryPi.EscPos.Usb\RaspberryPi.EscPos.Usb.csproj" />
     <ProjectReference Include="..\..\RaspberryPi.EscPos\RaspberryPi.EscPos.csproj" />
+    <ProjectReference Include="..\..\RaspberryPi.Interop\RaspberryPi.Interop.csproj" />
   </ItemGroup>
 
 </Project>

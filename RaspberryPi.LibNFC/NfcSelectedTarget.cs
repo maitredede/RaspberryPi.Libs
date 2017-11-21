@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC
 {
-    public sealed class NfcSelectedTarget : NativeObject
+    public sealed class NfcSelectedTarget : RaspberryPi.Interop.NativeObject
     {
         private readonly NfcDevice m_device;
         private readonly NfcTarget m_target;

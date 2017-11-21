@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace RaspberryPi.LibNFC.Interop
+namespace RaspberryPi.Interop
 {
     public abstract class NativeObject : SafeHandle
     {

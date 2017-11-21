@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2008
@@ -82,10 +82,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.EscPos.Usb", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EscPosTest", "Samples\EscPosTest\EscPosTest.csproj", "{82836E93-B044-4BA9-BB20-63DAE16D7A61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.Interop", "RaspberryPi.Interop\RaspberryPi.Interop.csproj", "{389036CE-1430-4C6A-A638-AF89B5B49880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaspberryPi.LibUsb", "RaspberryPi.LibUsb\RaspberryPi.LibUsb.csproj", "{9777EB82-F130-4634-8BB6-E9950B43D14B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B5985AB3-2772-41CC-9A42-1E3BD10B5441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -208,6 +216,30 @@ Global
 		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82836E93-B044-4BA9-BB20-63DAE16D7A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|x64.ActiveCfg = Debug|x64
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|x64.Build.0 = Debug|x64
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|x86.ActiveCfg = Debug|x86
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Debug|x86.Build.0 = Debug|x86
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|x64.ActiveCfg = Release|x64
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|x64.Build.0 = Release|x64
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|x86.ActiveCfg = Release|x86
+		{389036CE-1430-4C6A-A638-AF89B5B49880}.Release|x86.Build.0 = Release|x86
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|x64.ActiveCfg = Debug|x64
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|x64.Build.0 = Debug|x64
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|x86.ActiveCfg = Debug|x86
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Debug|x86.Build.0 = Debug|x86
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|x64.ActiveCfg = Release|x64
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|x64.Build.0 = Release|x64
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|x86.ActiveCfg = Release|x86
+		{9777EB82-F130-4634-8BB6-E9950B43D14B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

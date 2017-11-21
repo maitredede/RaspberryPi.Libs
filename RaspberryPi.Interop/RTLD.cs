@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RaspberryPi.Userland.SimpleGL.Interop
+namespace RaspberryPi.Interop
 {
     [Flags]
-    internal enum RTLD
+    public enum RTLD
     {
         RTLD_LAZY = 0x0001,
         RTLD_NOW = 0x0002,

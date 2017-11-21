@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC
 {
-    public sealed class NfcDevice : NativeObject, INfcInitiator, INfcEmulatedTag
+    public sealed class NfcDevice : RaspberryPi.Interop.NativeObject, INfcInitiator, INfcEmulatedTag
     {
         internal NfcDevice(IntPtr ptr) : base(ptr, true)
         {

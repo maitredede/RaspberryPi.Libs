@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RaspberryPi.LibNFC.Interop
 {
-    public abstract class NativeCollection<T> : NativeObject, ICollection<T>, IReadOnlyCollection<T>
+    public abstract class NativeCollection<T> : RaspberryPi.Interop.NativeObject, ICollection<T>, IReadOnlyCollection<T>
     {
         private T[] m_items;
 

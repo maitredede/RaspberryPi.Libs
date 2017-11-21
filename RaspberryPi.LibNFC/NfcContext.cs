@@ -7,7 +7,7 @@ namespace RaspberryPi.LibNFC
     /// <summary>
     /// NFC context
     /// </summary>
-    public sealed class NfcContext : NativeObject, INfcContext
+    public sealed class NfcContext : RaspberryPi.Interop.NativeObject, INfcContext
     {
         /// <summary>
         /// Create a new NFC context

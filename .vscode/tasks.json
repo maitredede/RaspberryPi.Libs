@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-coremandriverpoc",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/CoremanDriverPoc/CoremanDriverPoc.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build-escpostest",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Samples/EscPosTest/EscPosTest.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+
+    ]
+}
